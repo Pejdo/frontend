@@ -14,10 +14,10 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-          <a class="navbar-brand" href="#">Hidden brand</a>
+          <a href="/"></a>
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <router-link to="/">Home</router-link>
+              <router-link to="/">Food4You</router-link>
             </li>
             <li class="nav-item">
               <router-link to="/login">Login</router-link>
@@ -25,7 +25,8 @@
             <li class="nav-item">
               <router-link to="/registracija">Registracija</router-link>
             </li>
-            <li><router-link to="/about">About</router-link></li>
+            <!--     <li><router-link to="/about">About</router-link></li> -->
+            <li><router-link to="/recept">Recept</router-link></li>
           </ul>
 
           <form class="d-flex">
@@ -34,6 +35,7 @@
               type="search"
               placeholder="Search"
               aria-label="Search"
+              @click="recept"
             />
             <button class="btn btn-outline-success" type="submit">
               Search
@@ -51,7 +53,8 @@
 $siva: rgb(15, 9, 9);
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Ubuntu, San Francisco UI;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -67,3 +70,12 @@ ul > li > a {
   }
 }
 </style>
+<script>
+export default {
+  methods: {
+    recept() {
+      this.$router.push("/recept");
+    },
+  },
+};
+</script>
