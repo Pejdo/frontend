@@ -1,102 +1,178 @@
 <template>
-  <el-form
-    :model="ruleForm"
-    status-icon
-    :rules="rules"
-    ref="ruleForm"
-    label-width="120px"
-    class="demo-ruleForm"
-  >
-    <el-form-item label="Password" prop="pass">
-      <el-input
-        type="password"
-        v-model="ruleForm.pass"
-        autocomplete="off"
-      ></el-input>
-    </el-form-item>
-    <el-form-item label="Confirm" prop="checkPass">
-      <el-input
-        type="password"
-        v-model="ruleForm.checkPass"
-        autocomplete="off"
-      ></el-input>
-    </el-form-item>
-    <el-form-item label="Age" prop="age">
-      <el-input v-model.number="ruleForm.age"></el-input>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="submitForm('ruleForm')"
-        >Submit</el-button
-      >
-      <el-button @click="resetForm('ruleForm')">Reset</el-button>
-    </el-form-item>
-  </el-form>
+  <v-layout row justify-center>
+    <v-dialog v-model="editForm" scrollable persistent width="50vw">
+      <v-card>
+        <v-card-title>
+          <span class="headline">{{ editting ? "Edit " : "Add " }}Recipe</span>
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text style="height: 70vh;">
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-flex xs12>
+                <v-text-field
+                  v-model="recipeModel.title"
+                  label="Title"
+                  :error-messages="errors.collect('title')"
+                  v-validate="'required'"
+                  data-vv-name="title"
+                  required
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <div class="input-group input-group--dirty">
+                  <label>Content</label>
+                  <wysiwyg v-model="recipeModel.content" />
+                </div>
+              </v-flex>
+              <v-flex xs12 class="mb-2">
+                <div class="input-group input-group--dirty">
+                  <label class="ingredients_list_label">Ingredients</label>
+                  <ul class="ingredients_list">
+                    <li
+                      v-for="(item, index) in recipeModel.metadata.ingredients"
+                      :key="index"
+                    >
+                      {{ item.ingredient }}
+                      <v-btn
+                        fab
+                        dark
+                        small
+                        error
+                        @click="removeIngrediant(index)"
+                        class="btn_remove_ingredient"
+                      >
+                        <v-icon dark>remove</v-icon>
+                      </v-btn>
+                    </li>
+                  </ul>
+                </div>
+              </v-flex>
+              <v-flex xs10 class="mb-3">
+                <v-text-field
+                  ref="addIngredientRef"
+                  label="Ingredient"
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs2 class="mb-3">
+                <v-btn
+                  warning
+                  fab
+                  small
+                  dark
+                  @click="addIngrediant($refs.addIngredientRef)"
+                >
+                  <v-icon>add</v-icon>
+                </v-btn>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field
+                  v-model="recipeModel.metadata.author"
+                  label="Author"
+                  :error-messages="errors.collect('author')"
+                  v-validate="'required'"
+                  data-vv-name="author"
+                  required
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field
+                  v-model="recipeModel.metadata.preparation_time"
+                  label="Preparation Time (in minutes)"
+                  :error-messages="errors.collect('preparation')"
+                  v-validate="'required|numeric'"
+                  data-vv-name="preparation"
+                  required
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field
+                  v-model="recipeModel.metadata.cook_time"
+                  label="Cook Time (in minutes)"
+                  :error-messages="errors.collect('cook')"
+                  v-validate="'required|numeric'"
+                  data-vv-name="cook"
+                  required
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field
+                  v-model="recipeModel.metadata.servings"
+                  label="Servings (person)"
+                  :error-messages="errors.collect('servings')"
+                  v-validate="'required|numeric'"
+                  data-vv-name="servings"
+                  required
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <v-select
+                  v-bind:items="categories"
+                  v-model="recipeModel.metadata.category"
+                  label="Choose Category:"
+                  :error-messages="errors.collect('category')"
+                  v-validate="'required'"
+                  data-vv-name="category"
+                  required
+                ></v-select>
+              </v-flex>
+              <v-flex xs12>
+                <v-text-field
+                  v-model="recipeModel.metadata.youtube_id"
+                  label="Youtube ID"
+                  :error-messages="errors.collect('youtube')"
+                  v-validate="'required'"
+                  data-vv-name="youtube"
+                  required
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs12>
+                <img
+                  class="upload_image"
+                  :src="
+                    recipeModel.metadata.feature_image.url.replace(/ /g, '%20')
+                  "
+                  v-if="!!recipeModel.metadata.feature_image.url"
+                />
+                <form enctype="multipart/form-data" novalidate>
+                  <input
+                    type="file"
+                    @change="onFileChange"
+                    accept="image/*"
+                    data-vv-name="image"
+                    v-validate="'required|mimes:image/*'"
+                    required
+                  />
+                  <div class="input-group fileUploadError">
+                    <div
+                      class="input-group__error"
+                      v-show="errors.has('image') && !editting"
+                    >
+                      {{ errors.first("image") }}
+                    </div>
+                  </div>
+                </form>
+              </v-flex>
+            </v-layout>
+          </v-container>
+          <small>*indicates required field</small>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn error dark @click="closeDialog" :disabled="loading"
+            >Close</v-btn
+          >
+          <v-btn
+            :loading="loading"
+            :disabled="loading"
+            primary
+            dark
+            @click="saveRecipe(recipeModel)"
+            >Save</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-layout>
 </template>
-<script>
-export default {
-  data() {
-    var checkAge = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("Please input the age"));
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error("Please input digits"));
-        } else {
-          if (value < 18) {
-            callback(new Error("Age must be greater than 18"));
-          } else {
-            callback();
-          }
-        }
-      }, 1000);
-    };
-    var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please input the password"));
-      } else {
-        if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("checkPass");
-        }
-        callback();
-      }
-    };
-    var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please input the password again"));
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error("Two inputs don't match!"));
-      } else {
-        callback();
-      }
-    };
-    return {
-      ruleForm: {
-        pass: "",
-        checkPass: "",
-        age: "",
-      },
-      rules: {
-        pass: [{ validator: validatePass, trigger: "blur" }],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }],
-        age: [{ validator: checkAge, trigger: "blur" }],
-      },
-    };
-  },
-  methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
-  },
-};
-</script>
