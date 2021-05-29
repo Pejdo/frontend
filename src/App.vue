@@ -27,6 +27,9 @@
             </li>
             <!--     <li><router-link to="/about">About</router-link></li> -->
             <li><router-link to="/recept">Recept</router-link></li>
+            <li class="nav-item">
+              <router-link to="/newrecept">Unos recepta</router-link>
+            </li>
           </ul>
 
           <form class="d-flex">

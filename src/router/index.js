@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import login from "../views/Login.vue";
 import Registracija from "../views/Registracija.vue";
 import Recept from "../views/Recept.vue";
+import newRecipe from "../views/UnosRecepta.vue";
 Vue.use(VueRouter);
 
 const routes = [
@@ -35,6 +36,11 @@ const routes = [
     path: "/recept",
     name: "Recept",
     component: Recept,
+  },
+  {
+    path: "/newrecept",
+    name: "newRecipe",
+    component: newRecipe,
   },
 ];
 
