@@ -38,8 +38,8 @@
           <a class="forgot-password" href="https://oxfordinformatics.com/"
             >Forgot password ?</a
           ><br />
-          <a class="račun" href="https://oxfordinformatics.com/"
-            >Nemate račun ?</a
+          <router-link class="račun" to="/registracija"
+            >Nemate račun ?</router-link
           >
         </div>
       </el-form>
@@ -48,10 +48,12 @@
 </template>
 
 <script>
+import store from "@/store.js";
 export default {
   name: "login",
   data() {
     return {
+      store,
       validCredentials: {
         username: "lightscope",
         password: "lightscope",
@@ -100,8 +102,8 @@ export default {
       await this.simulateLogin();
       this.loading = false;
       if (
-        this.model.username === this.validCredentials.username &&
-        this.model.password === this.validCredentials.password
+        this.model.username === this.store.uname &&
+        this.model.password === this.store.password
       ) {
         this.$message.success("Login successfull");
       } else {

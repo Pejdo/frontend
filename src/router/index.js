@@ -1,10 +1,12 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import store from "@/store.js";
 import Home from "../views/Home.vue";
 import login from "../views/Login.vue";
 import Registracija from "../views/Registracija.vue";
 import Recept from "../views/Recept.vue";
 import newRecipe from "../views/UnosRecepta.vue";
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -23,8 +25,8 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
   {
-    path: "/login",
-    name: "Login",
+    path: "/prijava",
+    name: "Prijava",
     component: login,
   },
   {
@@ -48,6 +50,22 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+router.beforeEach((to, from, next) => {
+  console.log(
+    "Stara ruta",
+    from.name,
+    "-->",
+    to.name,
+    "korisnik",
+    store.currentEmail
+  );
+  const noUser = store.currentEmail === null;
+  if (noUser && to.meta.needsUser) {
+    next("Prijava");
+  } else {
+    next();
+  }
 });
 
 export default router;

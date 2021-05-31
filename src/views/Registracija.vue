@@ -4,21 +4,20 @@
       <h2>Registracija</h2>
       <el-form
         class="registracija-form"
-        :model="model"
+        :model="ruleForm"
         :rules="rules"
-        ref="form"
-        @submit.native.prevent="registracija"
+        ref="ruleForm"
       >
         <el-form-item prop="username">
           <el-input
-            v-model="model.username"
+            v-model="ruleForm.username"
             placeholder="Username"
             prefix-icon="fas fa-user"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="username">
+        <el-form-item prop="email">
           <el-input
-            v-model="model.email"
+            v-model="email"
             placeholder="email"
             prefix-icon="fas fa-user"
           ></el-input>
@@ -40,23 +39,16 @@
           ></el-input>
         </el-form-item>
         <el-form class="age">
-          <el-input v-model.number="ruleForm.day" placeholder="dan"></el-input>
-          <el-input
-            v-model.number="ruleForm.month"
-            placeholder="mjesec"
-          ></el-input>
-          <el-input
-            v-model.number="ruleForm.year"
-            placeholder="godina "
-          ></el-input>
+          <el-input placeholder="dan"></el-input>
+          <el-input placeholder="mjesec"></el-input>
+          <el-input placeholder="godina "></el-input>
         </el-form>
         <el-form-item>
           <el-button
-            :loading="loading"
             class="registracija-button"
             type="primary"
-            native-type="submit"
-            block
+            native-type="button"
+            @click="submitForm('ruleForm')"
             >registracija</el-button
           >
         </el-form-item>
@@ -71,9 +63,9 @@
 </template>
 
 <script>
+import store from "@/store.js";
 export default {
   name: "registracija",
-
   data() {
     var checkAge = (rule, value, callback) => {
       if (!value) {
@@ -91,6 +83,36 @@ export default {
         }
       }, 1000);
     };
+    /*     var validateUsername = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("Please input the username"));
+      } else {
+        if (this.ruleForm.username !== "") {
+          this.$refs.ruleForm.validateField("username");
+        }
+        callback();
+      }
+    }; 
+    validEmail: function(email) {
+      var re = /(.+)@(.+){2,}\.(.+){2,}/;
+      return re.test(email.toLowerCase());
+    },
+    validPassword: function(password) {
+      let testPassword = /^[A-Z]/;
+      return password.length >= 8 && testPassword.test(password);
+    },
+    validMjesec: function(mjesec) {
+      return mjesec != "";
+    },
+    validDan: function(dan) {
+      return dan != "";
+    },
+    validRepeatPassword: function(password, repeatPassword) {
+      return password == repeatPassword;
+    },
+    validGodina: function(godina) {
+      return godina > 1920 && godina < 2022;
+    },*/
     var validatePass = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("Please input the password"));
@@ -111,48 +133,31 @@ export default {
       }
     };
     return {
+      store,
+      email: "",
       ruleForm: {
+        username: "",
         pass: "",
         checkPass: "",
-        age: "",
-        day: "",
-        month: "",
-        year: "",
+        age: "21",
       },
-
-      validCredentials: {
-        username: "lightscope",
-        password: "lightscope",
-      },
-      model: {
-        username: "",
-        password: "",
-      },
-      loading: false,
       rules: {
-        username: [
-          {
-            required: true,
-            message: "Username is required",
-            trigger: "blur",
-          },
-          {
-            min: 4,
-            message: "Username length should be at least 5 characters",
-            trigger: "blur",
-          },
-        ],
-        password: [
-          { required: true, message: "Password is required", trigger: "blur" },
-          {
-            min: 5,
-            message: "Password length should be at least 5 characters",
-            trigger: "blur",
-          },
-        ],
         pass: [{ validator: validatePass, trigger: "blur" }],
         checkPass: [{ validator: validatePass2, trigger: "blur" }],
         age: [{ validator: checkAge, trigger: "blur" }],
+        username: [
+          {
+            required: true,
+            message: "Please input username",
+            trigger: "blur",
+          },
+          {
+            min: 3,
+            max: 5,
+            message: "Length should be 3 to 5",
+            trigger: "blur",
+          },
+        ],
       },
     };
   },
@@ -161,37 +166,12 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           alert("submit!");
+          this.store.currentEmail = this.ruleForm.username;
         } else {
           console.log("error submit!!");
           return false;
         }
       });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
-
-    simulateregistracija() {
-      return new Promise((resolve) => {
-        setTimeout(resolve, 800);
-      });
-    },
-    async registracija() {
-      let valid = await this.$refs.form.validate();
-      if (!valid) {
-        return;
-      }
-      this.loading = true;
-      await this.simulateregistracija();
-      this.loading = false;
-      if (
-        this.model.username === this.validCredentials.username &&
-        this.model.password === this.validCredentials.password
-      ) {
-        this.$message.success("registracija successfull");
-      } else {
-        this.$message.error("Username or password is invalid");
-      }
     },
   },
 };

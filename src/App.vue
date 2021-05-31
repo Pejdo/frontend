@@ -20,11 +20,25 @@
               <router-link to="/">Food4You</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/login">Login</router-link>
+              <a
+                v-if="
+                  !store.currentEmail &&
+                    $router.currentRoute.path != '/prijava' &&
+                    $router.currentRoute.path != '/registracija'
+                "
+              >
+                <router-link to="/prijava">Login</router-link>
+              </a>
+              <a v-if="store.currentEmail">
+                <router-link to="/profil">
+                  <button type="button" class="btn btn-light gumbic">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                    Profil
+                  </button>
+                </router-link>
+              </a>
             </li>
-            <li class="nav-item">
-              <router-link to="/registracija">Registracija</router-link>
-            </li>
+
             <!--     <li><router-link to="/about">About</router-link></li> -->
             <li><router-link to="/recept">Recept</router-link></li>
             <li class="nav-item">
@@ -52,6 +66,23 @@
   </div>
 </template>
 
+<script>
+import store from "@/store";
+/* import router from "@/router/index.js"; */
+export default {
+  data() {
+    return {
+      store,
+    };
+  },
+  methods: {
+    recept() {
+      this.$router.push("/recept");
+    },
+  },
+};
+</script>
+
 <style lang="scss">
 $siva: rgb(15, 9, 9);
 
@@ -73,12 +104,3 @@ ul > li > a {
   }
 }
 </style>
-<script>
-export default {
-  methods: {
-    recept() {
-      this.$router.push("/recept");
-    },
-  },
-};
-</script>

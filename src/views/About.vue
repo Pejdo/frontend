@@ -3,30 +3,18 @@
     <form>
       <h1>Work experiences</h1>
       <div class="work-experiences">
-        <div
-          class="form-row"
-          v-for="(experience, index) in workExperiences"
-          :key="index"
-        >
-          <div class="form-group col-md-6">
-            <label>Company</label>
-            <input
+        <div class="form-row" v-for="(experience, index) in steps" :key="index">
+          <div class="form-group" style="display:flex">
+            <label style="padding: 20px;display: block ruby;">
+              {{ index + 1 }} step
+            </label>
+            <el-input
+              type="textarea"
               v-model="experience.company"
               :name="`workExperiences[${index}][company]`"
-              type="text"
               class="form-control"
-              placeholder="Company"
-            />
-          </div>
-          <div class="form-group col-md-6">
-            <label>Title</label>
-            <input
-              v-model="experience.title"
-              :name="`workExperiences[${index}][title]`"
-              type="text"
-              class="form-control"
-              placeholder="Title"
-            />
+              placeholder="Step"
+            ></el-input>
           </div>
         </div>
       </div>
@@ -53,34 +41,28 @@ export default {
   name: "App",
 
   data: () => ({
-    workExperiences: [
+    steps: [
       {
-        company: "Foxconn",
-        title: "Engineer",
-      },
-      {
-        company: "Cherri Tech",
-        title: "Software Engineer",
+        step: "",
       },
     ],
   }),
 
   methods: {
-    addExperience() {
-      this.workExperiences.push({
-        company: "",
-        title: "",
+    addStep() {
+      this.steps.push({
+        step: "",
       });
     },
 
     submit() {
       const data = {
-        workExperiences: this.workExperiences,
+        steps: this.steps,
       };
       alert(JSON.stringify(data, null, 2));
     },
-    steps() {
-      console.log(this.workExperiences);
+    pri() {
+      console.log(this.steps);
     },
   },
 };
@@ -90,8 +72,5 @@ export default {
 .work-experiences > div {
   margin: 20px 0;
   padding-bottom: 10px;
-}
-.work-experiences > div:not(:last-child) {
-  border-bottom: 1px solid rgb(206, 212, 218);
 }
 </style>
