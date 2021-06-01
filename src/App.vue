@@ -31,10 +31,7 @@
               </a>
               <a v-if="store.currentEmail">
                 <router-link to="/profil">
-                  <button type="button" class="btn btn-light gumbic">
-                    <i class="fa fa-user" aria-hidden="true"></i>
-                    Profil
-                  </button>
+                  Profil
                 </router-link>
               </a>
             </li>
@@ -97,7 +94,12 @@ ul > li > a {
   float: left;
   text-decoration: none;
   color: $siva;
+  a {
+    text-decoration: none !important;
+    color: $siva;
+  }
 }
+
 @media (min-width: 1024px) {
   ul > li {
     margin-left: 5px;

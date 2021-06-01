@@ -1,4 +1,7 @@
 export default {
-  uname: "",
+  currentEmail: "",
   password: "",
+  currentUserIsAdmin: false,
+  trenutniKorisnik: {},
+  recept: {},
 };

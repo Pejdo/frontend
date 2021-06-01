@@ -17,12 +17,12 @@
         </el-form-item>
         <el-form-item prop="email">
           <el-input
-            v-model="email"
+            v-model="ruleForm.email"
             placeholder="email"
             prefix-icon="fas fa-user"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="password">
+        <el-form-item prop="pass">
           <el-input
             v-model="ruleForm.pass"
             placeholder="Password"
@@ -38,11 +38,19 @@
             prefix-icon="fas fa-lock"
           ></el-input>
         </el-form-item>
-        <el-form class="age">
-          <el-input placeholder="dan"></el-input>
-          <el-input placeholder="mjesec"></el-input>
-          <el-input placeholder="godina "></el-input>
-        </el-form>
+        <el-form-item prop="date">
+          <el-form class="age">
+            <el-input v-model="ruleForm.date.dan" placeholder="dan"></el-input>
+            <el-input
+              v-model="ruleForm.date.mjesec"
+              placeholder="mjesec"
+            ></el-input>
+            <el-input
+              v-model="ruleForm.date.godina"
+              placeholder="godina"
+            ></el-input>
+          </el-form>
+        </el-form-item>
         <el-form-item>
           <el-button
             class="registracija-button"
@@ -53,8 +61,8 @@
           >
         </el-form-item>
         <div>
-          <a class="forgot-password" href="https://oxfordinformatics.com/"
-            >Sign in?</a
+          <router-link class="forgot-password" to="/prijava"
+            >Sign in?</router-link
           >
         </div>
       </el-form>
@@ -67,58 +75,12 @@ import store from "@/store.js";
 export default {
   name: "registracija",
   data() {
-    var checkAge = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("Please input the age"));
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error("Please input digits"));
-        } else {
-          if (value < 18) {
-            callback(new Error("Age must be greater than 18"));
-          } else {
-            callback();
-          }
-        }
-      }, 1000);
-    };
-    /*     var validateUsername = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please input the username"));
-      } else {
-        if (this.ruleForm.username !== "") {
-          this.$refs.ruleForm.validateField("username");
-        }
-        callback();
-      }
-    }; 
-    validEmail: function(email) {
-      var re = /(.+)@(.+){2,}\.(.+){2,}/;
-      return re.test(email.toLowerCase());
-    },
-    validPassword: function(password) {
-      let testPassword = /^[A-Z]/;
-      return password.length >= 8 && testPassword.test(password);
-    },
-    validMjesec: function(mjesec) {
-      return mjesec != "";
-    },
-    validDan: function(dan) {
-      return dan != "";
-    },
-    validRepeatPassword: function(password, repeatPassword) {
-      return password == repeatPassword;
-    },
-    validGodina: function(godina) {
-      return godina > 1920 && godina < 2022;
-    },*/
     var validatePass = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("Please input the password"));
       } else {
         if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("checkPass");
+          this.$refs.ruleForm.validateField("repeat");
         }
         callback();
       }
@@ -132,19 +94,43 @@ export default {
         callback();
       }
     };
+    var validateEmail = (rule, value, callback) => {
+      const reg = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
+      if (value === "") {
+        callback(new Error("please input the email"));
+      } else if (reg.test(value)) {
+        callback();
+      } else {
+        callback(new Error("Please enter a valid email address"));
+      }
+    };
+    var checkDay = (value) => value >= 1 && value <= 31;
+    var checkMonth = (value) => value >= 1 && value <= 12;
+
+    var validateDate = (rule, value, callback) => {
+      if (value.dan && value.mjesec && value.godina === "") {
+        callback(new Error("please input the date"));
+      } else if (checkDay(value.dan) && checkMonth(value.mjesec)) {
+        console.log(value);
+        callback();
+      } else {
+        console.log(value.dan);
+        callback(new Error("please input valid number"));
+      }
+    };
     return {
       store,
-      email: "",
       ruleForm: {
         username: "",
+        email: "",
         pass: "",
         checkPass: "",
         age: "21",
+        date: { dan: "", mjesec: "", godina: "" },
       },
       rules: {
         pass: [{ validator: validatePass, trigger: "blur" }],
         checkPass: [{ validator: validatePass2, trigger: "blur" }],
-        age: [{ validator: checkAge, trigger: "blur" }],
         username: [
           {
             required: true,
@@ -158,6 +144,8 @@ export default {
             trigger: "blur",
           },
         ],
+        email: [{ validator: validateEmail, trigger: "blur" }],
+        date: [{ validator: validateDate, trigger: "blur" }],
       },
     };
   },
@@ -167,6 +155,7 @@ export default {
         if (valid) {
           alert("submit!");
           this.store.currentEmail = this.ruleForm.username;
+          this.$router.push({ name: "Home" });
         } else {
           console.log("error submit!!");
           return false;

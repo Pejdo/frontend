@@ -4,21 +4,21 @@
       <h2>Login</h2>
       <el-form
         class="login-form"
-        :model="model"
+        :model="ruleForm"
         :rules="rules"
         ref="form"
         @submit.native.prevent="login"
       >
-        <el-form-item prop="username">
+        <el-form-item prop="email">
           <el-input
-            v-model="model.username"
-            placeholder="Username"
+            v-model="ruleForm.email"
+            placeholder="email"
             prefix-icon="fas fa-user"
           ></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input
-            v-model="model.password"
+            v-model="ruleForm.password"
             placeholder="Password"
             type="password"
             prefix-icon="fas fa-lock"
@@ -26,7 +26,6 @@
         </el-form-item>
         <el-form-item>
           <el-button
-            :loading="loading"
             class="login-button"
             type="primary"
             native-type="submit"
@@ -52,55 +51,40 @@ import store from "@/store.js";
 export default {
   name: "login",
   data() {
+    var validateEmail = (rule, value, callback) => {
+      const reg = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
+      if (value === "") {
+        callback(new Error("please input the email"));
+      } else if (reg.test(value)) {
+        callback();
+      } else {
+        callback(new Error("Please enter a valid email address"));
+      }
+    };
     return {
       store,
-      validCredentials: {
-        username: "lightscope",
-        password: "lightscope",
-      },
-      model: {
-        username: "",
+      ruleForm: {
+        email: "",
         password: "",
       },
-      loading: false,
       rules: {
-        username: [
-          {
-            required: true,
-            message: "Username is required",
-            trigger: "blur",
-          },
-          {
-            min: 4,
-            message: "Username length should be at least 5 characters",
-            trigger: "blur",
-          },
-        ],
+        email: [{ validator: validateEmail, trigger: "blur" }],
         password: [
-          { required: true, message: "Password is required", trigger: "blur" },
-          {
-            min: 5,
-            message: "Password length should be at least 5 characters",
-            trigger: "blur",
-          },
+          { required: true, message: "please input password", trigger: "blur" },
         ],
       },
     };
   },
   methods: {
-    simulateLogin() {
-      return new Promise((resolve) => {
-        setTimeout(resolve, 800);
-      });
+    validEmail: function(email) {
+      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
     },
     async login() {
       let valid = await this.$refs.form.validate();
       if (!valid) {
         return;
       }
-      this.loading = true;
-      await this.simulateLogin();
-      this.loading = false;
       if (
         this.model.username === this.store.uname &&
         this.model.password === this.store.password

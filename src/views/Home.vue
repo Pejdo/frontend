@@ -122,6 +122,7 @@ export default {
   },
   mounted() {
     console.log(this.store.uname);
+    console.log(this.store.recept);
   },
 };
 </script>

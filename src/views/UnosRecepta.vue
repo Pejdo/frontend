@@ -4,9 +4,9 @@
       <div class="grid-content bg-purple-light"></div>
       <el-row>
         <div class="unos">
-          <el-form ref="form" :model="form" style="width:100%">
+          <el-form style="width:100%">
             <el-form-item label="Naziv recepta">
-              <el-input v-model="form.name"></el-input>
+              <el-input v-model="naziv"></el-input>
             </el-form-item>
             <el-upload action="#" list-type="picture-card" :auto-upload="false">
               <i slot="default" class="el-icon-plus"></i>
@@ -52,18 +52,18 @@
             >
               <el-time-picker
                 placeholder="Pick a time"
-                v-model="form.date2"
+                v-model="prepTime"
               ></el-time-picker>
 
               <el-time-picker
                 placeholder="Pick a time"
-                v-model="form.date2"
+                v-model="cookTime"
               ></el-time-picker>
             </el-form-item>
             <el-divider></el-divider>
 
             <el-form-item label="Sastojci">
-              <el-input type="textarea" v-model="form.desc"></el-input>
+              <el-input type="textarea" v-model="sastojci"></el-input>
             </el-form-item>
             <el-divider></el-divider>
 
@@ -71,17 +71,17 @@
               ><br />
 
               <form>
-                <div class="work-experiences">
+                <div class="recipe-step">
                   <div
                     class="form-row"
-                    v-for="(experience, index) in steps"
+                    v-for="(a, index) in steps"
                     :key="index"
                   >
                     <div class="form-group" style="">
                       <el-input
                         type="textarea"
-                        v-model="experience.company"
-                        :name="`workExperiences[${index}][company]`"
+                        v-model="a.step"
+                        :name="`cooking-step[${index}][step]`"
                         :placeholder="[[index + 1]] + ' step'"
                       ></el-input>
                     </div>
@@ -100,7 +100,7 @@
               </form>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="submit">Create</el-button>
+              <el-button type="primary" @click="onSubmit">Create</el-button>
               <el-button>Cancel</el-button>
             </el-form-item>
           </el-form>
@@ -111,20 +111,14 @@
 </template>
 
 <script>
+import store from "@/store";
 export default {
   data() {
     return {
-      form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: "",
-        desc1: "",
-      },
+      naziv: "",
+      prepTime: "",
+      cookTime: "",
+      sastojci: "",
       steps: [
         {
           step: "",
@@ -138,18 +132,26 @@ export default {
   methods: {
     onSubmit() {
       console.log("submit!");
+      store.recept = {
+        naziv: this.naziv,
+        prepTime: this.prepTime,
+        cookTime: this.cookTime,
+        sastojci: this.sastojci,
+        steps: this.steps,
+      };
     },
     addStep() {
       this.steps.push({
         step: "",
       });
     },
-    submit() {
+    /*    submit() {
       const data = {
         steps: this.steps,
       };
       alert(JSON.stringify(data, null, 2));
-    },
+    }, */
+    // funkcije za sliku ------->
     handleRemove(file) {
       console.log(file);
     },
