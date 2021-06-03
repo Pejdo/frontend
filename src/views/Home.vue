@@ -8,100 +8,45 @@
     <div style="display:flex; justify-content:center">
       <el-col :xs="24" :sm="13" :md="13" :lg="13"
         ><div class="grid-content bg-purple-light"></div>
-        <!--  <el-row class="boje">
-          <el-card class="card" :body-style="{ padding: '0px' }">
-            <img
-              src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-              class="image"
-            />
-            <div class="card-text">
-              <span>Yummy hamburger</span>
-              <div class="bottom clearfix">
-                <time class="time">12:11:1999</time>
-                <p>Desert</p>
-                <el-button type="text" class="button">Operating</el-button>
-              </div>
-            </div>
-          </el-card>
-        </el-row> -->
-        <!--   <el-row class="boje">
-          <el-card class="card" :body-style="{ padding: '0px' }">
-            <img
-              src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-              class="image"
-              @click="recept"
-              href="#"
-            />
-            <div class="card-text">
-              <span class="naziv">Yummy hamburger</span>
-              <div class="bottom clearfix">
-                <time class="time">12:11:1999</time>
-                <p>Desert</p>
-                <el-button type="text" class="button">Operating</el-button>
-              </div>
-              <div class="sakri">
-                <p>
-                  Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nam
-                  atque quam ab praesentium labore quidem natus commodi quasi,
-                  ipsa blanditiis voluptate alias eligendi odit laborum eum
-                  nemo. Est, repudiandae placeat!
-                </p>
-                <div class="ratiing ">
-                  <el-rate
-                    v-model="value"
-                    disabled
-                    show-score
-                    text-color="#ff9900"
-                    score-template="{value} points"
-                  >
-                  </el-rate>
-                </div>
-              </div>
-            </div>
-          </el-card>
-        </el-row> -->
-        <!--   <el-row class="boje">
-          <el-card class="card" :body-style="{ padding: '0px' }">
-            <img
-              src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-              class="image"
-            />
-            <div class="card-text">
-              <span class="naziv">Yummy hamburger</span>
-              <div class="bottom clearfix">
-                <time class="time">12:11:1999</time>
-                <p>Desert</p>
-                <el-button type="text" class="button">Operating</el-button>
-              </div>
-              <div class="sakri">
-                <p>
-                  Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nam
-                  atque quam ab praesentium labore quidem natus commodi quasi,
-                  ipsa blanditiis voluptate alias eligendi odit laborum eum
-                  nemo. Est, repudiandae placeat!
-                </p>
-                <div class="ratiing ">
-                  <el-rate
-                    v-model="value"
-                    disabled
-                    show-score
-                    text-color="#ff9900"
-                    score-template="{value} points"
-                  >
-                  </el-rate>
-                </div>
-              </div>
-            </div>
-          </el-card>
-        </el-row> -->
         <recipeCard />
+        <recipeCardo v-for="index in recepto" :key="index" :recept="index" />
       </el-col>
     </div>
   </el-row>
 </template>
 <script>
 import recipeCard from "@/components/recipeCard.vue";
+import recipeCardo from "@/components/_recipeCard.vue";
 import store from "@/store.js";
+let recepto = [];
+recepto = [
+  {
+    naziv: "ime",
+    src:
+      "data:image/jpeg;base64,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",
+    prepTime: "23",
+    cookTime: "31",
+    sastojci: "sadadsada",
+    steps: [
+      {
+        step: "sadsad",
+      },
+      { step: "sadasdasa" },
+    ],
+  },
+  {
+    naziv: "saads",
+    prepTime: "2asd3",
+    cookTime: "31",
+    sastojci: "sadadasdasada",
+    steps: [
+      {
+        step: "sadssaaxad",
+      },
+      { step: "sadasxaaxdasa" },
+    ],
+  },
+];
 export default {
   data() {
     return {
@@ -112,9 +57,10 @@ export default {
         "data:image/jpeg;base64,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",
       ],
       store,
+      recepto,
     };
   },
-  components: { recipeCard },
+  components: { recipeCard, recipeCardo },
   methods: {
     recept() {
       this.$router.push("/recept");
@@ -123,132 +69,11 @@ export default {
   mounted() {
     console.log(this.store.uname);
     console.log(this.store.recept);
+    this.store.recept = recepto;
   },
 };
 </script>
 <style lang="scss">
-.boje {
-  padding: 10px 5px 10px 5px;
-  .card {
-    height: 26%;
-    img {
-      height: 290px;
-      padding: 0px 5px 0px 5px;
-      margin: 0px 0px 10px 0px;
-    }
-    .card-text {
-      padding: 14px 14px 30px 14px;
-      time {
-        float: left;
-      }
-      p {
-        margin: 0px 50px 0px 0;
-      }
-      button {
-        margin: -14px 0px 0px 0px;
-      }
-    }
-  }
-}
-.sakri {
-  display: none;
-}
-@media (min-width: 1024px) {
-  .boje {
-    padding: 10px 5px 10px 5px;
-    .card {
-      height: 20%;
-      .el-card__body {
-        display: flex;
-      }
-      img {
-        width: 400px;
-        height: 300px;
-        padding: 5px 5px 5px 5px;
-        border-radius: 3%;
-        margin: 0px 0px 10px 0px;
-      }
-      .card-text {
-        position: relative;
-        padding: 14px 14px 30px 14px;
-        width: 100%;
-        .naziv {
-          position: absolute;
-          left: 0px;
-          padding: 10px;
-        }
-        .bottom {
-          time {
-            float: left;
-            bottom: 20px;
-            position: absolute;
-            left: 0px;
-            padding: 0px 10px;
-          }
-          p {
-            position: absolute;
-            top: 60px;
-            font-size: 19px;
-          }
-          button {
-            position: absolute;
-            right: 91px;
-            top: 32px;
-          }
-          span {
-            position: absolute;
-            left: 15px;
-            padding-top: 10px;
-          }
-        }
-        .sakri {
-          display: block;
-          position: absolute;
-          bottom: 145px;
-          p {
-            text-align: left;
-            padding: 0px 0px 14px;
-            font-size: 16px;
-          }
-          .ratiing {
-            position: absolute;
-          }
-        }
-      }
-    }
-  }
-}
-.time {
-  font-size: 13px;
-  color: #999;
-}
-
-.bottom {
-  margin-top: 13px;
-  line-height: 12px;
-}
-
-.button {
-  padding: 0;
-  float: right;
-}
-
-.image {
-  width: 100%;
-  height: 30%;
-  display: block;
-}
-
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-
-.clearfix:after {
-  clear: both;
-}
-
 .el-carousel__item h3 {
   color: #475669;
   font-size: 18px;

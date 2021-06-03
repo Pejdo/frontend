@@ -1,265 +1,32 @@
 <template>
-  <div>
-    <div class="demo-image">
-      <div class="block">
-        <span class="demonstration">{{ fit }}</span>
-        <el-image
-          :src="url"
-          style="width: 100%; height: 300px"
-          :fit="scale - down"
-        ></el-image>
-      </div>
-    </div>
-    <el-row style="display:flex; justify-content:center">
-      <el-col :xs="24" :sm="13" :md="13" :lg="13"
-        ><div class="grid-content bg-purple">
-          <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item :to="{ path: '/' }"
-              >homepage</el-breadcrumb-item
-            >
-            <el-breadcrumb-item>recept </el-breadcrumb-item>
-          </el-breadcrumb>
-        </div>
-        <div class="cookTime">
-          <el-divider><i class="el-icon-time"></i></el-divider>
-          <span>priprema: </span>
-          <span> 15 min</span>
-          <span>kuhanje: </span>
-          <span> 15 min</span>
-          <el-divider></el-divider>
-        </div>
-        <div class="nameIng">
-          <h6>ime recepte</h6>
-          <el-card class="box-card">
-            <div slot="header" class="clearfix">
-              <span>Sastojci</span>
-            </div>
-            <div v-for="o in 9" :key="o" class="text item">
-              {{ "List item " + o }}
-            </div>
-          </el-card>
-          <div class="Stepovi">
-            <el-col :span="4" class="grid-content bg-purple">1</el-col>
-            <el-col :span="20">
-              <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cumque
-                nobis dicta doloribus minima corrupti sit quasi, voluptatum
-                asperiores quisquam tempora adipisci? Ipsum dicta animi nostrum
-                sunt hic minus corporis nam!
-              </p></el-col
-            >
-
-            <el-col :span="4" class="grid-content bg-purple">2</el-col>
-            <el-col :span="20">
-              <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cumque
-                nobis dicta doloribus minima corrupti sit quasi, voluptatum
-                asperiores quisquam tempora adipisci? Ipsum dicta animi nostrum
-                sunt hic minus corporis nam!
-              </p></el-col
-            >
-          </div>
-          <el-divider></el-divider>
-
-          <div class="rating">
-            <span class="demonstration">Ocjenite recept</span>
-            <el-rate v-model="value1"></el-rate>
-          </div>
-          <el-divider></el-divider>
-          <div class="kom">
-            <div class="post-content">
-              <div class="post-container">
-                <img
-                  src="https://bootdey.com/img/Content/avatar/avatar6.png"
-                  alt="user"
-                  class="profile-photo-md pull-left"
-                />
-                <div class="post-detail">
-                  <div class="user-info">
-                    <h5>
-                      <a href="timeline.html" class="profile-link"
-                        >Alexis Clark</a
-                      >
-                    </h5>
-                    <p class="text-muted">
-                      Published a photo about 3 mins ago
-                    </p>
-                  </div>
-                  <div class="post-comment">
-                    <img
-                      src="https://bootdey.com/img/Content/avatar/avatar7.png"
-                      alt=""
-                      class="profile-photo-sm"
-                    />
-                    <p>
-                      <i class="em em-laughing"></i> Lorem ipsum dolor sit amet,
-                      consectetur adipiscing elit, sed do eiusmod tempor
-                      incididunt ut labore et dolore magna aliqua. Ut enim ad
-                      minim veniam, quis nostrud
-                    </p>
-                  </div>
-                  <div class="post-comment">
-                    <img
-                      src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                      alt=""
-                      class="profile-photo-sm"
-                    />
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud
-                    </p>
-                  </div>
-                  <div class="post-comment">
-                    <img
-                      src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                      alt=""
-                      class="profile-photo-sm"
-                    />
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Post a comment"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
+  <recipePage :recept="recepto" />
 </template>
-
 <script>
+import recipePage from "@/components/recipePage.vue";
+import store from "@/store.js";
 export default {
+  components: { recipePage },
   data() {
     return {
-      fits: ["fill", "contain", "cover", "none", "scale-down"],
-      url: "https://cdn.wallpapersafari.com/98/55/qiIX8l.jpg",
-      value1: null,
+      store,
+      recepto: {
+        naziv: "ime",
+        src:
+          "data:image/jpeg;base64,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",
+        prepTime: "23",
+        cookTime: "31",
+        sastojci: "sadadsada",
+        steps: [
+          {
+            step: "sadsad",
+          },
+          { step: "sadasdasa" },
+        ],
+      },
     };
+  },
+  mounted() {
+    console.log(this.recepto);
   },
 };
 </script>
-
-<style lang="scss">
-.el-row {
-  .el-breadcrumb {
-    padding: 10px;
-  }
-  .cookTime {
-    i {
-      font-size: 24px;
-    }
-    span {
-      font-size: 16px;
-      padding: 2px;
-    }
-
-    .el-icon-time::before {
-      width: 40px;
-      display: inline-block;
-      background-color: white;
-    }
-    span:nth-child(3)::after {
-      content: " ";
-      padding: 10px;
-    }
-  }
-  .nameIng {
-    h6 {
-      padding: 0px 0px 10px 0px;
-    }
-    .el-card.is-always-shadow {
-      box-shadow: none;
-    }
-    .box-card {
-      margin: 20px 0px 0px 0px;
-    }
-    .Stepovi {
-      overflow: hidden;
-      padding: 5px;
-      .bg-purple {
-        padding: 5px;
-      }
-      .el-col p {
-        text-align: justify;
-        padding: 10px 10px 10px 10px;
-      }
-    }
-    .post-content {
-      background: #f8f8f8;
-      border-radius: 4px;
-      width: 100%;
-      border: 1px solid #f1f2f2;
-      margin-bottom: 20px;
-      overflow: hidden;
-      position: relative;
-
-      .post-container {
-        padding: 20px;
-        img.profile-photo-md {
-          height: 50px;
-          width: 50px;
-          border-radius: 50%;
-        }
-        .post-detail {
-          position: relative;
-          img.profile-photo-sm {
-            margin-right: 10px;
-            height: 40px;
-            width: 40px;
-            border-radius: 50%;
-          }
-          .post-comment {
-            display: inline-flex;
-            margin: 10px auto;
-            width: 100%;
-            text-align: justify;
-            .post-text {
-              line-height: 24px;
-              margin: 0;
-
-              .form-control {
-                height: 30px;
-                border: 1px solid #ccc;
-                box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-                margin: 7px 0;
-                min-width: 0;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-.el-row {
-  margin-bottom: 20px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-.el-col {
-  border-radius: 4px;
-}
-.bg-purple-dark {
-  background: #99a9bf;
-}
-.bg-purple {
-  background: #d3dce6;
-}
-.bg-purple-light {
-  background: #e5e9f2;
-}
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-}
-.row-bg {
-  padding: 10px 0;
-  background-color: #f9fafc;
-}
-</style>

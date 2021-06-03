@@ -1,76 +1,112 @@
 <template>
   <div id="app" class="container">
-    <form>
-      <h1>Work experiences</h1>
-      <div class="work-experiences">
-        <div class="form-row" v-for="(experience, index) in steps" :key="index">
-          <div class="form-group" style="display:flex">
-            <label style="padding: 20px;display: block ruby;">
-              {{ index + 1 }} step
-            </label>
-            <el-input
-              type="textarea"
-              v-model="experience.company"
-              :name="`workExperiences[${index}][company]`"
-              class="form-control"
-              placeholder="Step"
-            ></el-input>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <button @click="addExperience" type="button" class="btn btn-secondary">
-          Add experience
-        </button>
-      </div>
-
-      <hr />
-
-      <div class="form-group">
-        <button @click="submit" type="button" class="btn btn-primary">
-          Submit
-        </button>
-      </div>
-    </form>
+    <el-form
+      :model="ruleForm"
+      ref="ruleForm"
+      label-width="120px"
+      class="demo-dynamic"
+    >
+      <!-- <el-form-item
+        prop="email"
+        label="Email"
+        :rules="[
+          {
+            required: true,
+            message: 'Please input email address',
+            trigger: 'blur',
+          },
+          {
+            type: 'email',
+            message: 'Please input correct email address',
+            trigger: ['blur', 'change'],
+          },
+        ]"
+      >
+        <el-input v-model="dynamicValidateForm.email"></el-input>
+      </el-form-item> -->
+      <el-form-item
+        v-for="(value, index) in ruleForm.steps"
+        :key="value.key"
+        :prop="'steps.' + index + '.value'"
+        :rules="{
+          required: true,
+          message: 'Step nemože biti prazan',
+          trigger: 'blur',
+        }"
+      >
+        <el-input
+          type="textarea"
+          :placeholder="[[index + 1]] + ' step'"
+          v-model="value.value"
+          stype="padding: 0px 0px 10px 0px;"
+        ></el-input
+        ><span
+          ><el-button @click.prevent="removeDomain(value)"
+            >Delete</el-button
+          ></span
+        >
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submitForm('ruleForm')"
+          >Submit</el-button
+        >
+        <el-button @click="addStep">add step</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
 <script>
 export default {
-  name: "App",
-
-  data: () => ({
-    steps: [
-      {
-        step: "",
+  data() {
+    return {
+      ruleForm: {
+        steps: [
+          {
+            key: 1,
+            value: "",
+          },
+        ],
       },
-    ],
-  }),
-
+    };
+  },
   methods: {
-    addStep() {
-      this.steps.push({
-        step: "",
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
       });
     },
-
-    submit() {
-      const data = {
-        steps: this.steps,
-      };
-      alert(JSON.stringify(data, null, 2));
+    removeStep(item) {
+      var index = this.ruleForm.steps.indexOf(item);
+      if (index !== -1) {
+        this.ruleForm.steps.splice(index, 1);
+      }
     },
-    pri() {
-      console.log(this.steps);
+    addStep() {
+      this.ruleForm.steps.push({
+        value: "",
+      });
     },
   },
 };
 </script>
 
-<style>
+<style lang="scss">
 .work-experiences > div {
   margin: 20px 0;
   padding-bottom: 10px;
+}
+@media (min-width: 720px) {
+  .el-form-item__content {
+    display: flex;
+    span {
+      margin: auto;
+    }
+  }
 }
 </style>

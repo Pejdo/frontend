@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <navbar />
+    <!--  <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <button
           class="navbar-toggler"
@@ -36,8 +37,8 @@
               </a>
             </li>
 
-            <!--     <li><router-link to="/about">About</router-link></li> -->
-            <li><router-link to="/recept">Recept</router-link></li>
+                 <li><router-link to="/about">About</router-link></li> -->
+    <!--             <li><router-link to="/recept">Recept</router-link></li>
             <li class="nav-item">
               <router-link to="/newrecept">Unos recepta</router-link>
             </li>
@@ -58,20 +59,16 @@
         </div>
       </div>
     </nav>
-
+-->
     <router-view />
   </div>
 </template>
 
 <script>
-import store from "@/store";
 /* import router from "@/router/index.js"; */
+import navbar from "@/components/navbar.vue";
 export default {
-  data() {
-    return {
-      store,
-    };
-  },
+  components: { navbar },
   methods: {
     recept() {
       this.$router.push("/recept");
