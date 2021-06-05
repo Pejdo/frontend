@@ -4,4 +4,5 @@ export default {
   currentUserIsAdmin: false,
   trenutniKorisnik: {},
   recept: {},
+  search: "",
 };

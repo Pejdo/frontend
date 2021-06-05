@@ -48,8 +48,9 @@
             type="search"
             placeholder="Search"
             aria-label="Search"
+            v-model="search"
           />
-          <button class="btn btn-outline-success" type="submit">
+          <button class="btn btn-outline-success" type="button">
             Search
           </button>
         </form>
@@ -59,11 +60,23 @@
 </template>
 <script>
 import store from "@/store";
+import _ from "lodash";
 export default {
   data() {
     return {
       store,
+      search: "",
     };
+  },
+  methods: {
+    makeSearch() {
+      this.$emit("search", this.search);
+    },
+  },
+  watch: {
+    search: _.debounce(function() {
+      this.makeSearch();
+    }, 499),
   },
 };
 </script>

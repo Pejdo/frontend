@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <navbar />
+    <navbar @search="searchhh" />
     <!--  <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <button
@@ -67,11 +67,21 @@
 <script>
 /* import router from "@/router/index.js"; */
 import navbar from "@/components/navbar.vue";
+import store from "@/store.js";
 export default {
   components: { navbar },
+  data() {
+    return {
+      search1: "",
+      store,
+    };
+  },
   methods: {
     recept() {
       this.$router.push("/recept");
+    },
+    searchhh(value) {
+      this.store.search = value;
     },
   },
 };

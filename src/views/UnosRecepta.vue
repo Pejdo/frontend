@@ -108,8 +108,9 @@
               <el-button @click="addStep">add step</el-button>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="onSubmit">Create</el-button>
-              <el-button>Cancel</el-button>
+              <el-button type="primary" @click="submitForm('ruleForm')"
+                >Create</el-button
+              >
             </el-form-item>
           </el-form>
         </div>
@@ -119,7 +120,7 @@
 </template>
 
 <script>
-import store from "@/store";
+import { recepti } from "@/services";
 export default {
   data() {
     return {
@@ -154,14 +155,18 @@ export default {
   methods: {
     onSubmit() {
       console.log("submit!");
-      store.recept = {
+      let recept = {
         naziv: this.naziv,
+        url: this.dialogImageUrl,
         prepTime: this.prepTime,
         cookTime: this.cookTime,
         sastojci: this.sastojci,
         steps: this.steps,
         date: new Date(),
       };
+      recepti.createRecept(recept).then(() => {
+        this.$router.push({ name: "Home" });
+      });
     },
     removeStep(item) {
       var index = this.ruleForm.steps.indexOf(item);
@@ -190,6 +195,28 @@ export default {
     },
     handleDownload(file) {
       console.log(file);
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let recept = {
+            naziv: this.ruleForm.naziv,
+            url: this.ruleForm.dialogImageUrl,
+            prepTime: this.ruleForm.prepTime,
+            cookTime: this.ruleForm.cookTime,
+            sastojci: this.ruleForm.sastojci,
+            steps: this.ruleForm.steps,
+            date: new Date(),
+          };
+          recepti.createRecept(recept).then(() => {
+            this.$router.push({ name: "Home" });
+          });
+          alert(recept);
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
   },
 };

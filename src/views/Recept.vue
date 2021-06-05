@@ -1,5 +1,5 @@
 <template>
-  <recipePage :recept="recepto" />
+  <recipePage :recept="store.recept" />
 </template>
 <script>
 import recipePage from "@/components/recipePage.vue";
@@ -25,8 +25,6 @@ export default {
       },
     };
   },
-  mounted() {
-    console.log(this.recepto);
-  },
+  mounted() {},
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <el-row class="boje">
+  <el-row class="boje" @click="opens()">
     <el-card class="card" :body-style="{ padding: '0px' }">
       <img :src="recept.src" class="image" />
       <div class="card-text">
@@ -10,16 +10,15 @@
           <el-button type="text" class="button">Operating</el-button>
         </div>
         <div class="sakri">
-          <p v-for="step in recept.steps" :key="step">
-            {{ step }}
+          <p v-for="step in recept.steps" :key="step.step">
+            {{ step.step }}
           </p>
           <div class="ratiing ">
             <el-rate
-              v-model="value"
+              v-model="recept.rating"
               disabled
               show-score
               text-color="#ff9900"
-              score-template="{value} points"
             >
             </el-rate>
           </div>
@@ -36,6 +35,11 @@ export default {
     };
   },
   props: ["recept"],
+  methods: {
+    opens() {
+      console.log("conso,le");
+    },
+  },
 };
 </script>
 <style lang="scss">
@@ -87,7 +91,7 @@ export default {
         width: 100%;
         .naziv {
           position: absolute;
-          left: 0px;
+          left: 5px;
           padding: 10px;
         }
         .bottom {

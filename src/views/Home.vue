@@ -9,18 +9,27 @@
       <el-col :xs="24" :sm="13" :md="13" :lg="13"
         ><div class="grid-content bg-purple-light"></div>
         <recipeCard />
-        <recipeCardo v-for="index in recepto" :key="index" :recept="index" />
+        <recipeCardo
+          v-for="index in recepto"
+          :key="index.naziv"
+          :recept="index"
+          @click.native="recept(index.id)"
+        />
       </el-col>
     </div>
   </el-row>
 </template>
 <script>
+import _ from "lodash";
 import recipeCard from "@/components/recipeCard.vue";
 import recipeCardo from "@/components/_recipeCard.vue";
 import store from "@/store.js";
+import { recepti } from "@/services";
+console.log(recepti);
 let recepto = [];
-recepto = [
+/* recepto = [
   {
+    id: 1,
     naziv: "ime",
     src:
       "data:image/jpeg;base64,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",
@@ -33,8 +42,11 @@ recepto = [
       },
       { step: "sadasdasa" },
     ],
+    rating: 3.7,
   },
+
   {
+    id: 2,
     naziv: "saads",
     prepTime: "2asd3",
     cookTime: "31",
@@ -46,7 +58,7 @@ recepto = [
       { step: "sadasxaaxdasa" },
     ],
   },
-];
+]; */
 export default {
   data() {
     return {
@@ -62,14 +74,60 @@ export default {
   },
   components: { recipeCard, recipeCardo },
   methods: {
-    recept() {
+    recept(value) {
+      const recept = this.recepto.filter((v) => v.id == value);
+      console.log(recept[0].id);
+      this.store.recept = {
+        id: recept[0].id,
+        naziv: recept[0].naziv,
+        src: recept[0].src,
+        prepTime: recept[0].prepTime,
+        cookTime: recept[0].cookTime,
+        sastojci: recept[0].sastojci,
+        steps: recept[0].steps,
+        rating: recept[0].rating,
+      };
       this.$router.push("/recept");
     },
+    async fetchRecepti(term) {
+      term = term || this.store.search;
+      this.recepto = await recepti.getAll(term);
+    },
+
+    /*
+      fetch(`http://localhost:3000?title=${this.store.search}`)
+        .then((value) => value.json())
+        .then((data) => {
+          console.log("backend", data);
+          let data2 = data.map((recept) => {
+            return {
+              id: recept.id,
+              naziv: recept.naziv,
+              src: recept.src,
+              prepTime: recept.prepTime,
+              cookTime: recept.cookTime,
+              sastojci: recept.sastojci,
+              steps: recept.steps,
+              rating: recept.rating,
+            };
+          }); */
   },
+  /*   computed: {
+    filteredRecepti() {
+      let newRecepti = this.recepto.filter(
+        (elem) => elem.naziv.indexOf(this.store.search) >= 0
+      );
+      return newRecepti;
+    },
+  }, */
   mounted() {
-    console.log(this.store.uname);
-    console.log(this.store.recept);
-    this.store.recept = recepto;
+    /*   this.fetchRecepti(); */
+    this.fetchRecepti();
+  },
+  watch: {
+    "store.search": _.debounce(function() {
+      this.fetchRecepti();
+    }, 300),
   },
 };
 </script>
