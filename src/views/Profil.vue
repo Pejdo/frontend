@@ -14,7 +14,7 @@
               <el-input v-model="ruleForm.naziv"></el-input>
             </el-form-item>
             <div>
-              <img :src="src" class="uploading-image" :width="400" />
+              <img :src="ruleForm.src" class="uploading-image" :width="400" />
               <input type="file" accept="image/jpg" @change="uploadImage" />
             </div>
 
@@ -108,10 +108,13 @@
 </template>
 
 <script>
+import store from "@/store.js";
 import { recepti } from "@/services";
 export default {
+  props: ["id"],
   data() {
     return {
+      store,
       ruleForm: {
         naziv: "",
         prepTime: "",
@@ -122,8 +125,9 @@ export default {
             step: "",
           },
         ],
+        src: null,
       },
-      src: null,
+
       rules: {
         naziv: [{ required: true, message: "Unesite naziv", trigger: "blur" }],
         sastojci: [
@@ -184,14 +188,15 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let recept = {
+            id: this.id,
             naziv: this.ruleForm.naziv,
-            src: this.src,
+            src: this.ruleForm.src,
             prepTime: this.ruleForm.prepTime,
             cookTime: this.ruleForm.cookTime,
             sastojci: this.ruleForm.sastojci,
             steps: this.ruleForm.steps,
           };
-          recepti.createRecept(recept).then(() => {
+          recepti.makeChange(recept).then(() => {
             this.$router.push({ name: "Home" });
           });
           alert(recept);
@@ -201,6 +206,10 @@ export default {
         }
       });
     },
+  },
+  async mounted() {
+    console.log("profil ", this.id);
+    this.ruleForm = await recepti.getOneEdit(this.id);
   },
 };
 </script>

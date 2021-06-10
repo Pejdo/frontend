@@ -1,12 +1,12 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import store from "@/store.js";
 import Home from "../views/Home.vue";
 import login from "../views/Login.vue";
 import Registracija from "../views/Registracija.vue";
 import Recept from "../views/Recept.vue";
 import newRecipe from "../views/UnosRecepta.vue";
-
+import Profil from "../views/Profil.vue";
+import { Auth } from "@/services";
 Vue.use(VueRouter);
 
 const routes = [
@@ -16,7 +16,8 @@ const routes = [
     component: Home,
   },
   {
-    path: "/about",
+    path: "/recepti/:id",
+    props: true,
     name: "About",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -44,6 +45,12 @@ const routes = [
     name: "newRecipe",
     component: newRecipe,
   },
+  {
+    path: "/profil/:id",
+    props: true,
+    name: "Profil",
+    component: Profil,
+  },
 ];
 
 const router = new VueRouter({
@@ -51,21 +58,15 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
-router.beforeEach((to, from, next) => {
-  console.log(
-    "Stara ruta",
-    from.name,
-    "-->",
-    to.name,
-    "korisnik",
-    store.currentEmail
-  );
-  const noUser = store.currentEmail === null;
-  if (noUser && to.meta.needsUser) {
-    next("Prijava");
-  } else {
-    next();
-  }
-});
 
+router.beforeEach((to, from, next) => {
+  const publicPages = ["/registracija", "/prijava"];
+  const loginPotreban = !publicPages.includes(to.path);
+  let user = Auth.getUser();
+  console.log(user);
+  if (loginPotreban && !user) {
+    return next("/prijava");
+  }
+  next();
+});
 export default router;

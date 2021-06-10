@@ -21,24 +21,30 @@
           <li class="nav-item">
             <a
               v-if="
-                !store.currentEmail &&
+                !authenticated &&
                   $router.currentRoute.path != '/prijava' &&
                   $router.currentRoute.path != '/registracija'
               "
             >
               <router-link to="/prijava">Login</router-link>
             </a>
-            <a v-if="store.currentEmail">
+            <a v-if="authenticated">
               <router-link to="/profil">
                 Profil
               </router-link>
             </a>
+            <span style="margin-left:5px; cursor:pointer" @click="logout">
+              Odjava</span
+            >
           </li>
 
           <!--     <li><router-link to="/about">About</router-link></li> -->
           <li><router-link to="/recept">Recept</router-link></li>
           <li class="nav-item">
             <router-link to="/newrecept">Unos recepta</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/profil">profil aka recept edit </router-link>
           </li>
         </ul>
 
@@ -59,18 +65,22 @@
   </nav>
 </template>
 <script>
-import store from "@/store";
 import _ from "lodash";
+import { Auth } from "@/services";
 export default {
   data() {
     return {
-      store,
       search: "",
+      ...Auth.state,
     };
   },
   methods: {
     makeSearch() {
       this.$emit("search", this.search);
+    },
+    logout() {
+      Auth.logout();
+      this.$router.go();
     },
   },
   watch: {

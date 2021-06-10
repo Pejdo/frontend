@@ -75,19 +75,8 @@ export default {
   components: { recipeCard, recipeCardo },
   methods: {
     recept(value) {
-      const recept = this.recepto.filter((v) => v.id == value);
-      console.log(recept[0].id);
-      this.store.recept = {
-        id: recept[0].id,
-        naziv: recept[0].naziv,
-        src: recept[0].src,
-        prepTime: recept[0].prepTime,
-        cookTime: recept[0].cookTime,
-        sastojci: recept[0].sastojci,
-        steps: recept[0].steps,
-        rating: recept[0].rating,
-      };
-      this.$router.push("/recept");
+      console.log("ovo je value ", value);
+      this.$router.push(`/recepti/${value}`);
     },
     async fetchRecepti(term) {
       term = term || this.store.search;

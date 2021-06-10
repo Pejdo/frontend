@@ -1,30 +1,36 @@
 <template>
   <el-row class="boje" @click="opens()">
-    <el-card class="card" :body-style="{ padding: '0px' }">
-      <img :src="recept.src" class="image" />
-      <div class="card-text">
-        <span class="naziv">{{ recept.naziv }}</span>
-        <div class="bottom clearfix">
-          <time class="time">{{ new Date() }}</time>
-          <p>Desert</p>
-          <el-button type="text" class="button">Operating</el-button>
-        </div>
-        <div class="sakri">
-          <p v-for="step in recept.steps" :key="step.step">
-            {{ step.step }}
-          </p>
-          <div class="ratiing ">
-            <el-rate
-              v-model="recept.rating"
-              disabled
-              show-score
-              text-color="#ff9900"
-            >
-            </el-rate>
-          </div>
+    <div class="blog-card">
+      <div class="meta">
+        <div class="photo">
+          <img style="width: 100%;height: 100%;" :src="recept.src" />
         </div>
       </div>
-    </el-card>
+      <div class="description">
+        <h1 style="text-align: left;">
+          {{ recept.naziv }}
+
+          <!-- <button href="#">Read More</button> -->
+        </h1>
+        <h2 style="text-align: left;">Opening a door to the future</h2>
+        <p style="text-align:left">
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+          Reprehenderit natus labore, iure cupiditate odit sunt sequi debitis?
+          Earum iure optio exercitationem similique eum laboriosam obcaecati,
+          fugit ducimus aspernatur, ratione eos!
+        </p>
+        <el-rate
+          v-model="recept.rating"
+          disabled
+          show-score
+          text-color="#ff9900"
+        >
+        </el-rate>
+        <div>
+          <time class="time" style="float: left;">{{ recept.date }}</time>
+        </div>
+      </div>
+    </div>
   </el-row>
 </template>
 <script>
@@ -43,126 +49,192 @@ export default {
 };
 </script>
 <style lang="scss">
-.boje {
-  padding: 10px 5px 10px 5px;
-  .card {
-    height: 26%;
-    img {
-      height: 290px;
-      padding: 0px 5px 0px 5px;
-      margin: 0px 0px 10px 0px;
+* {
+  box-sizing: border-box;
+}
+
+$color_white: #fff;
+$color_prime: #5ad67d;
+$color_grey: #e2e2e2;
+$color_grey_dark: #a2a2a2;
+
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem auto;
+  box-shadow: 0 3px 7px -1px rgba(#000, 0.1);
+  margin-bottom: 1.6%;
+  background: $color_white;
+  line-height: 1.4;
+  font-family: sans-serif;
+  border-radius: 5px;
+  overflow: hidden;
+  z-index: 0;
+  a {
+    color: inherit;
+    &:hover {
+      color: $color_prime;
     }
-    .card-text {
-      padding: 14px 14px 30px 14px;
-      time {
-        float: left;
+  }
+  &:hover {
+    .photo {
+      transform: scale(1.3) rotate(3deg);
+    }
+  }
+  .meta {
+    position: relative;
+    z-index: 0;
+    height: 300px;
+  }
+  .photo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.2s;
+  }
+  .details,
+  .details ul {
+    margin: auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .details {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    margin: auto;
+    transition: left 0.2s;
+    background: rgba(#000, 0.6);
+    color: $color_white;
+    padding: 10px;
+    width: 100%;
+    font-size: 0.9rem;
+    a {
+      text-decoration: dotted underline;
+    }
+    ul li {
+      display: inline-block;
+    }
+    .author:before {
+      font-family: FontAwesome;
+      margin-right: 10px;
+      content: "\f007";
+    }
+
+    .date:before {
+      font-family: FontAwesome;
+      margin-right: 10px;
+      content: "\f133";
+    }
+
+    .tags {
+      ul:before {
+        font-family: FontAwesome;
+        content: "\f02b";
+        margin-right: 10px;
       }
-      p {
-        margin: 0px 50px 0px 0;
-      }
-      button {
-        margin: -14px 0px 0px 0px;
+      li {
+        margin-right: 2px;
+        &:first-child {
+          margin-left: -4px;
+        }
       }
     }
   }
-}
-.sakri {
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .boje {
-    padding: 10px 5px 10px 5px;
-    .card {
-      height: 20%;
-      .el-card__body {
-        display: flex;
-      }
-      img {
-        width: 400px;
-        height: 300px;
-        padding: 5px 5px 5px 5px;
-        border-radius: 3%;
-        margin: 0px 0px 10px 0px;
-      }
-      .card-text {
+  .description {
+    padding: 1rem;
+    background: $color_white;
+    position: relative;
+    z-index: 1;
+    h1,
+    h2 {
+      font-family: Poppins, sans-serif;
+    }
+    h1 {
+      line-height: 1;
+      margin: 0;
+      font-size: 1.7rem;
+    }
+    h2 {
+      font-size: 1rem;
+      font-weight: 300;
+      text-transform: uppercase;
+      color: $color_grey_dark;
+      margin-top: 5px;
+    }
+    .read-more {
+      text-align: right;
+      a {
+        color: $color_prime;
+        display: inline-block;
         position: relative;
-        padding: 14px 14px 30px 14px;
-        width: 100%;
-        .naziv {
-          position: absolute;
-          left: 5px;
-          padding: 10px;
+        &:after {
+          content: "\f061";
+          font-family: FontAwesome;
+          margin-left: -10px;
+          opacity: 0;
+          vertical-align: middle;
+          transition: margin 0.3s, opacity 0.3s;
         }
-        .bottom {
-          time {
-            float: left;
-            bottom: 20px;
-            position: absolute;
-            left: 0px;
-            padding: 0px 10px;
-          }
-          p {
-            position: absolute;
-            top: 60px;
-            font-size: 19px;
-          }
-          button {
-            position: absolute;
-            right: 91px;
-            top: 32px;
-          }
-          span {
-            position: absolute;
-            left: 15px;
-            padding-top: 10px;
-          }
-        }
-        .sakri {
-          display: block;
-          position: absolute;
-          bottom: 145px;
-          p {
-            text-align: left;
-            padding: 0px 0px 14px;
-            font-size: 16px;
-          }
-          .ratiing {
-            position: absolute;
-          }
+
+        &:hover:after {
+          margin-left: 5px;
+          opacity: 1;
         }
       }
     }
+    .el-rate > span {
+      float: left;
+    }
   }
-}
-.time {
-  font-size: 13px;
-  color: #999;
-}
+  p {
+    position: relative;
+    margin: 1rem 0 0;
+    &:first-of-type {
+      margin-top: 1.25rem;
+      &:before {
+        content: "";
+        position: absolute;
+        height: 5px;
+        background: $color_prime;
+        width: 35px;
+        top: -0.75rem;
+        border-radius: 3px;
+      }
+    }
+  }
+  &:hover {
+    .details {
+      left: 0%;
+    }
+  }
 
-.bottom {
-  margin-top: 13px;
-  line-height: 12px;
-}
-
-.button {
-  padding: 0;
-  float: right;
-}
-
-.image {
-  width: 100%;
-  height: 30%;
-  display: block;
-}
-
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-
-.clearfix:after {
-  clear: both;
+  @media (min-width: 640px) {
+    flex-direction: row;
+    .meta {
+      flex-basis: 40%;
+      height: auto;
+    }
+    .description {
+      flex-basis: 60%;
+      /*  &:before {
+        transform: skewX(-3deg);
+        content: "";
+        background: #fff;
+        width: 30px;
+        position: absolute;
+        left: -10px;
+        top: 0;
+        bottom: 0;
+        z-index: -1;
+      } */
+    }
+  }
 }
 </style>

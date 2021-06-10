@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { Auth } from "@/services";
 import store from "@/store.js";
 export default {
   name: "login",
@@ -76,23 +77,24 @@ export default {
     };
   },
   methods: {
-    validEmail: function(email) {
-      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(email);
-    },
     async login() {
-      let valid = await this.$refs.form.validate();
+      /* let valid = await this.$refs.form.validate();
       if (!valid) {
         return;
-      }
-      if (
+      } */
+      let success = await Auth.login(
+        this.ruleForm.email,
+        this.ruleForm.password
+      );
+      /*  if (
         this.model.username === this.store.uname &&
         this.model.password === this.store.password
       ) {
         this.$message.success("Login successfull");
       } else {
         this.$message.error("Username or password is invalid");
-      }
+      } */
+      console.log("rezzz" + success);
     },
   },
 };
