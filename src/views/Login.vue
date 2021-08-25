@@ -6,7 +6,7 @@
         class="login-form"
         :model="ruleForm"
         :rules="rules"
-        ref="form"
+        ref="ruleform"
         @submit.native.prevent="login"
       >
         <el-form-item prop="email">
@@ -47,45 +47,44 @@
 </template>
 
 <script>
-import { Auth } from "@/services";
-import store from "@/store.js";
+import { Auth } from '@/services/auth'
+import store from '@/store.js'
 export default {
-  name: "login",
   data() {
     var validateEmail = (rule, value, callback) => {
-      const reg = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
-      if (value === "") {
-        callback(new Error("please input the email"));
+      const reg = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/
+      if (value === '') {
+        callback(new Error('please input the email'))
       } else if (reg.test(value)) {
-        callback();
+        callback()
       } else {
-        callback(new Error("Please enter a valid email address"));
+        callback(new Error('Please enter a valid email address'))
       }
-    };
+    }
     return {
       store,
       ruleForm: {
-        email: "",
-        password: "",
+        email: '',
+        password: '',
       },
       rules: {
-        email: [{ validator: validateEmail, trigger: "blur" }],
+        email: [{ validator: validateEmail, trigger: 'blur' }],
         password: [
-          { required: true, message: "please input password", trigger: "blur" },
+          { required: true, message: 'please input password', trigger: 'blur' },
         ],
       },
-    };
+    }
   },
   methods: {
     async login() {
-      /* let valid = await this.$refs.form.validate();
+      /*  let valid = await this.$refs.form.validate();
       if (!valid) {
         return;
       } */
       let success = await Auth.login(
         this.ruleForm.email,
         this.ruleForm.password
-      );
+      )
       /*  if (
         this.model.username === this.store.uname &&
         this.model.password === this.store.password
@@ -94,10 +93,11 @@ export default {
       } else {
         this.$message.error("Username or password is invalid");
       } */
-      console.log("rezzz" + success);
+      this.$router.push({ name: 'Home' })
+      console.log('rezzz' + success)
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -149,7 +149,7 @@ $teal: rgb(0, 124, 137);
   padding-bottom: 30px;
 }
 h2 {
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
   letter-spacing: 1px;
   font-family: Roboto, sans-serif;
   padding-bottom: 20px;

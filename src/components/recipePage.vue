@@ -17,7 +17,10 @@
         </el-image>
       </div>
     </div>
-    <el-row style="display:flex; justify-content:center">
+    <el-row
+      :gutter="10"
+      style="display:flex; justify-content:center;text-align:center"
+    >
       <el-col :xs="24" :sm="13" :md="13" :lg="13"
         ><div class="grid-content bg-purple">
           <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -39,29 +42,52 @@
           <h6>{{ recept.naziv }}</h6>
           <el-card class="box-card">
             <div slot="header" class="clearfix">
-              <span>{{ recept.sastojci }}</span>
-            </div>
-            <div v-for="o in 9" :key="o" class="text item">
-              {{ "List item " + o }}
+              <!--           <span>{{ recept.sastojci }}</span> -->
+              <div
+                class="Stepovi"
+                v-for="(value, index) in recept.sastojci"
+                :key="value"
+              >
+                <el-col :xs="4" :sm="6" :md="8" :lg="9" :xl="4"
+                  ><div class="grid-content bg-purple">{{ index }}</div></el-col
+                >
+                <el-col :span="20"
+                  ><p>{{ value.ing }}</p></el-col
+                >
+              </div>
             </div>
           </el-card>
           <div
             class="Stepovi"
             v-for="(value, index) in recept.steps"
-            :key="value"
+            :key="index"
           >
-            <el-col :span="4" class="grid-content bg-purple">{{
-              index
-            }}</el-col>
-            <el-col :span="20"
-              ><p>{{ value.step }}</p></el-col
+            <el-col class="grid-content bg-purple">{{ value.metoda }}</el-col>
+            <el-col
+              v-for="(elem, key) in recept.steps[index].kategorijeStepova"
+              :key="key"
+              ><p>{{ key }}.{{ elem.step }}</p></el-col
             >
           </div>
           <el-divider></el-divider>
 
           <div class="rating">
             <span class="demonstration">Ocjenite recept</span>
-            <el-rate v-model="value1"></el-rate>
+            <el-rate
+              v-model="recept.rating"
+              disabled
+              show-score
+              text-color="#ff9900"
+              score-template="{value} "
+              >"></el-rate
+            >
+            <el-popover placement="right" width="400" trigger="click">
+              <el-rate v-model="rating"></el-rate>
+              <button type="button" @click="rateIt">submpuir</button>
+              <el-button slot="reference" style="margin-top:20px"
+                >Ocjenite recept</el-button
+              >
+            </el-popover>
           </div>
           <el-divider></el-divider>
           <div class="kom">
@@ -130,19 +156,41 @@
   </div>
 </template>
 <script>
+import { recepti } from '@/services/index.js'
 export default {
   data() {
     return {
-      fits: ["fill", "contain", "cover", "none", "scale-down"],
-      url: "https://cdn.wallpapersafari.com/98/55/qiIX8l.jpg",
-      value1: null,
-    };
+      fits: ['fill', 'contain', 'cover', 'none', 'scale-down'],
+      url: 'https://cdn.wallpapersafari.com/98/55/qiIX8l.jpg',
+      rating: '',
+    }
   },
-  props: ["recept"],
-};
+  props: ['recept'],
+  methods: {
+    async rateIt() {
+      let serverData = {
+        rating: this.rating,
+        id: this.recept.id,
+      }
+      console.log(serverData)
+      await recepti.rateRecept(serverData)
+    },
+  },
+  mounted() {
+    console.log(this.recept.rating.length)
+    let k = this.recept.rating.reduce((sum, nxt) => (sum += nxt))
+    /*   / / this.recept.rating.length
+      this.recept.rating.lenght() */
+    console.log('ovo je ', k / this.recept.rating.length)
+    this.recept.rating = k / this.recept.rating.length
+  },
+}
 </script>
 
 <style lang="scss">
+.el-col-4 {
+  float: unset;
+}
 .el-row {
   .el-breadcrumb {
     padding: 10px;
@@ -162,7 +210,7 @@ export default {
       background-color: white;
     }
     span:nth-child(3)::after {
-      content: " ";
+      content: ' ';
       padding: 10px;
     }
   }
@@ -184,7 +232,7 @@ export default {
       }
       .el-col p {
         text-align: justify;
-        padding: 10px 10px 10px 10px;
+        /* padding: 10px 10px 10px 10px; */
       }
     }
     .post-content {

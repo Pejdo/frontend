@@ -18,24 +18,17 @@
           <li class="nav-item">
             <router-link to="/">Food4You</router-link>
           </li>
+          <li><router-link to="/kategorije">Kategorije</router-link></li>
           <li class="nav-item">
             <a
               v-if="
-                !authenticated &&
+                !auth.authenticated &&
                   $router.currentRoute.path != '/prijava' &&
                   $router.currentRoute.path != '/registracija'
               "
             >
               <router-link to="/prijava">Login</router-link>
             </a>
-            <a v-if="authenticated">
-              <router-link to="/profil">
-                Profil
-              </router-link>
-            </a>
-            <span style="margin-left:5px; cursor:pointer" @click="logout">
-              Odjava</span
-            >
           </li>
 
           <!--     <li><router-link to="/about">About</router-link></li> -->
@@ -43,9 +36,22 @@
           <li class="nav-item">
             <router-link to="/newrecept">Unos recepta</router-link>
           </li>
-          <li class="nav-item">
-            <router-link to="/profil">profil aka recept edit </router-link>
+          <li>
+            <a v-if="auth.authenticated">
+              <router-link to="/useracc">
+                {{ username }}
+              </router-link>
+              <span class="odjava" style="cursor:pointer" @click="logout">
+                Odjava</span
+              >
+            </a>
           </li>
+          <!--   <li class="nav-item">
+            <router-link to="/profil">profil aka recept edit </router-link>
+          </li> -->
+          <!--   <li class="nav-item">
+            <router-link to="/useracc">Profil </router-link>
+          </li> -->
         </ul>
 
         <form class="d-flex">
@@ -55,8 +61,14 @@
             placeholder="Search"
             aria-label="Search"
             v-model="search"
+            @keyup.enter="makeSearch"
+            preventDefault
           />
-          <button class="btn btn-outline-success" type="button">
+          <button
+            class="btn btn-outline-success"
+            type="button"
+            @click="makeSearch"
+          >
             Search
           </button>
         </form>
@@ -65,30 +77,39 @@
   </nav>
 </template>
 <script>
-import _ from "lodash";
-import { Auth } from "@/services";
+import _ from 'lodash'
+import { Auth } from '@/services/auth'
 export default {
   data() {
     return {
-      search: "",
-      ...Auth.state,
-    };
+      search: '',
+      auth: Auth.state,
+      username: 'user',
+    }
   },
   methods: {
     makeSearch() {
-      this.$emit("search", this.search);
+      this.$emit('search', this.search)
     },
     logout() {
-      Auth.logout();
-      this.$router.go();
+      Auth.logout()
+      this.$router.go()
     },
+    getName() {
+      this.username =
+        Auth.getUsersName() === false ? 'user' : Auth.getUsersName()
+    },
+  },
+  mounted() {
+    this.getName()
+    console.log(Auth.getUsersName() === false)
   },
   watch: {
     search: _.debounce(function() {
-      this.makeSearch();
+      this.makeSearch()
     }, 499),
   },
-};
+}
 </script>
 
 <style lang="scss">
@@ -102,7 +123,14 @@ ul > li > a {
     color: $siva;
   }
 }
-
+.odjava {
+  display: block;
+}
+@media (min-width: 720px) {
+  .odjava {
+    display: inline-block;
+  }
+}
 @media (min-width: 1024px) {
   ul > li {
     margin-left: 5px;

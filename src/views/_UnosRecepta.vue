@@ -53,10 +53,10 @@
               :prop="'sastojci.' + index + '.ing'"
               :rules="{
                 required: true,
-                message: 'Sastojak ne moze biti prazan',
+                message: 'Step nemože biti prazan',
                 trigger: 'blur',
               }"
-              label-position="left"
+              label-position="top"
               label="sastojci"
             >
               <el-tooltip
@@ -66,11 +66,12 @@
                 placement="top-start"
                 style="padding: 15px 0px;float:left"
               >
-                <i class="el-icon-info"></i>
+                <i class="el-icon-info"> </i>
               </el-tooltip>
               <el-input
                 :placeholder="[[index + 1]] + ' ing'"
                 v-model="value.ing"
+                stype="padding: 0px 0px 10px 0px;"
               ></el-input
               ><span
                 ><el-button @click.prevent="removeIng(value)"
@@ -106,78 +107,7 @@
               "
             >
               Koraci
-              <button @click="addKategoriju" type="button" style="float:right">
-                Dodaj kategoriju
-              </button>
             </p>
-            <el-form-item
-              id="kategorija"
-              class="kategorija"
-              v-for="(index, key) in ruleForm.steps"
-              :key="key"
-              :prop="'steps.' + key + '.metoda'"
-              :rules="{
-                required: true,
-                message: 'Step nemože biti prazan',
-                trigger: 'blur',
-              }"
-            >
-              <el-input v-model="index.metoda"></el-input>
-              {{ index.metoda }} {{ key }}
-              <el-form-item
-                id="wrapper"
-                class="koraci"
-                v-for="(value, i) in ruleForm.steps[key].kategorijeStepova"
-                :key="i"
-                :prop="'steps.' + i + '.metoda'"
-                :rules="{
-                  required: true,
-                  message: 'Step nemože biti prazan',
-                  trigger: 'blur',
-                }"
-              >
-                <!--   {{ value.step }} {{ value }} {{ i }} -->
-                <el-input
-                  type="textarea"
-                  :placeholder="value.step"
-                  v-model="value.step"
-                  stype="padding: 0px 0px 10px 0px;"
-                ></el-input
-                ><span
-                  ><el-button @click.prevent="removeStep(key, value)"
-                    >Delete</el-button
-                  ></span
-                >
-              </el-form-item>
-              <el-form-item>
-                <el-button @click="addStep(key)">add step</el-button>
-                <el-divider></el-divider>
-              </el-form-item>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="submitForm('ruleForm')"
-                >Create</el-button
-              >
-            </el-form-item>
-            <!--   <el-divider></el-divider>
-            <p
-              style="
-                text-align: left;
-                line-height: 40px;
-                font-size: 14px;
-                color: #606266;
-              "
-            >
-              Koraci
-              <button type="button" style="float:right">
-                Dodaj kategoriju
-              </button>
-            </p>
-            <el-input
-              :placeholder="ruleForm.steps[0].metoda"
-              :v-model="ruleForm.steps[0].metoda"
-              style="padding: 0px 0px 10px 0px;display: block;width:200px"
-            ></el-input>
             <el-form-item
               id="wrapper"
               class="koraci"
@@ -193,7 +123,7 @@
               <el-input
                 type="textarea"
                 :placeholder="[[index + 1]] + ' step'"
-                v-model="value.index"
+                v-model="value.step"
                 stype="padding: 0px 0px 10px 0px;"
               ></el-input
               ><span
@@ -203,14 +133,13 @@
               >
             </el-form-item>
             <el-form-item>
-              {{ ruleForm.steps[0].kategorijeStepova[0] }}
-              <el-button @click="addStep()">add step</el-button>
+              <el-button @click="addStep">add step</el-button>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="submitForm('ruleForm')"
                 >Create</el-button
               >
-            </el-form-item> -->
+            </el-form-item>
           </el-form>
         </div>
       </el-row>
@@ -221,7 +150,6 @@
 <script>
 import { recepti } from "@/services/index";
 export default {
-  props: ["id"],
   data() {
     return {
       ruleForm: {
@@ -235,23 +163,7 @@ export default {
         ],
         steps: [
           {
-            metoda: "qq",
-            kategorijeStepova: [
-              {
-                step: "ww",
-              },
-            ],
-          },
-          {
-            metoda: "kk",
-            kategorijeStepova: [
-              {
-                step: "eee",
-              },
-              {
-                step: "ffff",
-              },
-            ],
+            step: "",
           },
         ],
       },
@@ -293,40 +205,21 @@ export default {
     },
     addIng() {
       this.ruleForm.sastojci.push({
-        ing: "",
+        value: "",
       });
     },
-    removeStep(num, item) {
-      var index = this.ruleForm.steps[num].kategorijeStepova.findIndex(
-        (value) => {
-          console.log("ovo je value ", value.step);
-          return value.step == item.step;
-        }
-      );
-      console.log(index, num, item.step);
+    removeStep(item) {
+      var index = this.ruleForm.steps.indexOf(item);
       if (index !== -1) {
-        this.ruleForm.steps[num].kategorijeStepova.splice(index, 1);
+        this.ruleForm.steps.splice(index, 1);
       }
     },
-    addStep(event) {
-      console.log(event);
-      this.ruleForm.steps[event].kategorijeStepova.push({
-        step: "",
-      });
-    },
-    addKategoriju() {
+    addStep() {
       this.ruleForm.steps.push({
-        metoda: "",
-        kategorijeStepova: [
-          {
-            step: "",
-          },
-        ],
+        value: "",
       });
     },
-    removeKategoriju(index) {
-      this.ruleForm.steps.splice(index, 1);
-    },
+
     /*    submit() {
       const data = {
         steps: this.steps,
@@ -347,15 +240,14 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let recept = {
-            id: this.id,
             naziv: this.ruleForm.naziv,
-            src: this.ruleForm.src,
+            src: this.src,
             prepTime: this.ruleForm.prepTime,
             cookTime: this.ruleForm.cookTime,
             sastojci: this.ruleForm.sastojci,
             steps: this.ruleForm.steps,
           };
-          recepti.makeChange(recept).then(() => {
+          recepti.createRecept(recept).then(() => {
             this.$router.push({ name: "Home" });
           });
           alert(recept);
@@ -366,13 +258,21 @@ export default {
       });
     },
   },
-  async mounted() {
-    console.log("profil ", this.id);
-    this.ruleForm = await recepti.getOneEdit(this.id);
-  },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+.sastojci {
+  .el-button {
+    margin: 10px 0 0 0;
+  }
+}
+.koraci {
+  .el-form-item {
+    .el-button {
+      margin: 10px 0 0 0;
+    }
+  }
+}
 /* .unos {
   display: flex;
   padding: 10px;
@@ -380,7 +280,7 @@ export default {
   .vrijeme {
     display: flex;
     padding: 10px 0px;
-    /*    .el-from-item > .el-form-item__content:first-child {
+      .el-from-item > .el-form-item__content:first-child {
       float: left;
       margin-left: -30px;
       .el-input {
@@ -390,7 +290,7 @@ export default {
         }
       }
     } 
-    .el-form-item {
+ .el-form-item {
       margin-bottom: 0px;
       .el-form-item__content {
         float: left;
@@ -411,21 +311,32 @@ export default {
       }
     }
   }
+  .sastojci {
+    .el-input {
+      width: 225px;
+    }
+  }
 }
 @media (min-width: 720px) {
-  .koraci {
-    > .el-form-item__content {
-      width: 91%;
-      .el-textarea {
-        padding: 0px 5px 10px 0px;
+  .unos {
+    .sastojci {
+      .el-input {
+        width: 70%;
       }
-      span {
-        .el-button {
-          position: absolute;
-          top: 20%;
+    }
+    .koraci {
+      > .el-form-item__content {
+        width: 91%;
+        .el-textarea {
+          padding: 0px 5px 10px 0px;
+        }
+        span {
+          .el-button {
+            position: absolute;
+          }
         }
       }
     }
   }
-} */
+}  */
 </style>

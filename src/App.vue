@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <navbar @search="searchhh" />
+    <navbar @search="searchhh" :key="$route.fullPath" />
     <!--  <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <button
@@ -95,7 +95,6 @@ $siva: rgb(15, 9, 9);
     Ubuntu, San Francisco UI;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
 }
 ul > li > a {
   float: left;

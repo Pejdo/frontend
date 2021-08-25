@@ -1,27 +1,21 @@
 <template>
-  <recipePage :recept="recept" @click.native="changes" />
+  <recipePage :recept="clap" :key="clap.id" />
 </template>
 <script>
-import recipePage from "@/components/recipePage.vue";
-import store from "@/store.js";
-import { recepti } from "@/services";
+import recipePage from '@/components/recipePage.vue'
+import { recepti } from '@/services/index'
 export default {
   components: { recipePage },
-  props: ["id"],
+  props: ['id'],
   data() {
     return {
-      store,
-      recept: null,
-    };
+      clap: {},
+    }
   },
   async mounted() {
-    console.log(this.id);
-    this.recept = await recepti.getOne(this.id);
+    console.log(this.id)
+    this.clap = await recepti.getOne(this.id)
+    console.log(this.clap)
   },
-  methods: {
-    changes() {
-      this.$router.push(`/profil/${this.id}`);
-    },
-  },
-};
+}
 </script>

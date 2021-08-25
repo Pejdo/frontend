@@ -1,8 +1,8 @@
 <template>
-  <el-row class="boje" ref="boje">
-    <div class="blog-card antish">
+  <el-row class="boje" @click="opens()">
+    <div class="blog-card">
       <div class="meta">
-        <div class="photo">
+        <div class="photo" @click="opens()">
           <img style="width: 100%;height: 100%;" :src="recept.src" />
         </div>
       </div>
@@ -31,6 +31,8 @@
         </div>
       </div>
     </div>
+    <button style="width:50%" @click="shareId">edit</button>
+    <button style="width:50%" @click="deleteId">delete</button>
   </el-row>
 </template>
 <script>
@@ -38,16 +40,26 @@ export default {
   data() {
     return {
       value: 0,
-    }
+    };
   },
-  props: ['recept'],
-}
-/* boje.addEventListener("hover", () => {
-  console.log("hej");
-}); */
+  props: ["recept"],
+  methods: {
+    opens() {
+      this.$router.push(`/recepti/${this.recept.id}`);
+    },
+    shareId() {
+      console.log(this.recept.id);
+      this.$emit("edit", this.recept.id);
+    },
+    deleteId() {
+      console.log(this.recept.id);
+      this.$emit("deleteIt", this.recept.id);
+    },
+  },
+};
 </script>
 <style lang="scss">
-* {
+/* * {
   box-sizing: border-box;
 }
 
@@ -56,11 +68,11 @@ $color_prime: #5ad67d;
 $color_grey: #e2e2e2;
 $color_grey_dark: #a2a2a2;
 
+
 .blog-card {
   display: flex;
   flex-direction: column;
   margin: 1rem auto;
-
   margin-bottom: 1.6%;
   background: $color_white;
   line-height: 1.4;
@@ -122,19 +134,19 @@ $color_grey_dark: #a2a2a2;
     .author:before {
       font-family: FontAwesome;
       margin-right: 10px;
-      content: '\f007';
+      content: "\f007";
     }
 
     .date:before {
       font-family: FontAwesome;
       margin-right: 10px;
-      content: '\f133';
+      content: "\f133";
     }
 
     .tags {
       ul:before {
         font-family: FontAwesome;
-        content: '\f02b';
+        content: "\f02b";
         margin-right: 10px;
       }
       li {
@@ -173,7 +185,7 @@ $color_grey_dark: #a2a2a2;
         display: inline-block;
         position: relative;
         &:after {
-          content: '\f061';
+          content: "\f061";
           font-family: FontAwesome;
           margin-left: -10px;
           opacity: 0;
@@ -197,7 +209,7 @@ $color_grey_dark: #a2a2a2;
     &:first-of-type {
       margin-top: 1.25rem;
       &:before {
-        content: '';
+        content: "";
         position: absolute;
         height: 5px;
         background: $color_prime;
@@ -231,8 +243,8 @@ $color_grey_dark: #a2a2a2;
         top: 0;
         bottom: 0;
         z-index: -1;
-      } */
+      } 
     }
   }
-}
+} */
 </style>

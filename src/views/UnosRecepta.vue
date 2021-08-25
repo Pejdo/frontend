@@ -20,6 +20,42 @@
 
             <!-- //slika -->
             <el-divider></el-divider>
+            <el-form-item label="Kategorije">
+              <el-select
+                v-model="ruleForm.kategorije"
+                placeholder="Odaberite kategorije"
+              >
+                <el-option label="Doručak" value="Doručak"></el-option>
+                <el-option label="Ručak" value="Ručak"></el-option>
+                <el-option label="Pića" value="Pića"></el-option>
+                <el-option label="Predjela" value="Predjela"></el-option>
+                <el-option label="Juhe" value="Juhe"></el-option>
+                <el-option label="Salate" value="Salate"></el-option>
+                <el-option
+                  label="Glavna jela: govedina"
+                  value="Glavna jela: govedina"
+                ></el-option>
+                <el-option
+                  label="Glavna jela: perad"
+                  value="Glavna jela: perad"
+                ></el-option>
+                <el-option
+                  label="Glavna jela: svinjetina"
+                  value="Glavna jela: svinjetina"
+                ></el-option>
+                <el-option
+                  label="Glavna jela: plodovi mora"
+                  value="Glavna jela: plodovi mora"
+                ></el-option>
+                <el-option
+                  label="Glavna jela: vegetarijanska"
+                  value="Glavna jela: vegetarijanska"
+                ></el-option>
+                <el-option label="Deserti" value="Deserti"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-divider></el-divider>
+
             <div class="vrijeme">
               <el-form-item prop="prepTime" label="Vrijeme">
                 <el-tooltip
@@ -45,18 +81,57 @@
               </el-form-item>
             </div>
             <el-divider></el-divider>
-            <el-form-item label="Sastojci" prop="sastojci">
+            <el-form-item
+              id="wrapper2"
+              class="sastojci"
+              v-for="(value, index) in ruleForm.sastojci"
+              :key="value.key"
+              :prop="'sastojci.' + index + '.ing'"
+              :rules="{
+                required: true,
+                message: 'Sastojak ne moze biti prazan',
+                trigger: 'blur',
+              }"
+              label-position="left"
+              label="sastojci"
+            >
               <el-tooltip
                 class="item"
                 effect="dark"
                 content="Unesite sastojke nemorate unositi količini samo ih navesti i odvojiti zarezom"
                 placement="top-start"
-                style="padding: 12px 0px;float:left"
+                style="padding: 15px 0px;float:left"
+              >
+                <i class="el-icon-info"></i>
+              </el-tooltip>
+              <el-input
+                :placeholder="[[index + 1]] + ' ing'"
+                v-model="value.ing"
+              ></el-input
+              ><span
+                ><el-button @click.prevent="removeIng(value)"
+                  >Delete</el-button
+                ></span
+              >
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="addIng">add step</el-button>
+            </el-form-item>
+            <!--  <el-form-item label="Sastojci" prop="sastojci">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="Unesite sastojke nemorate unositi količini samo ih navesti i odvojiti zarezom"
+                placement="top-start"
+                style="padding: 15px 0px;float:left"
               >
                 <i class="el-icon-info"> </i>
               </el-tooltip>
-              <el-input type="textarea" v-model="ruleForm.sastojci"></el-input>
-            </el-form-item>
+              <el-input
+                type="textarea"
+                v-model="ruleForm.sastojci.ing"
+              ></el-input>
+            </el-form-item> -->
             <el-divider></el-divider>
             <p
               style="
@@ -67,7 +142,80 @@
               "
             >
               Koraci
+              <button @click="addKategoriju" type="button" style="float:right">
+                Dodaj kategoriju
+              </button>
             </p>
+            <el-form-item
+              id="kategorija"
+              class="kategorija"
+              v-for="(index, key) in ruleForm.steps"
+              :key="key"
+              :prop="'steps.' + key + '.metoda'"
+              :rules="{
+                required: true,
+                message: 'Step nemože biti prazan',
+                trigger: 'blur',
+              }"
+            >
+              <el-input
+                placeholder="Unesite kategoriju"
+                v-model="index.metoda"
+              ></el-input>
+              <el-form-item
+                id="wrapper"
+                class="koraci"
+                v-for="(value, i) in ruleForm.steps[key].kategorijeStepova"
+                :key="i"
+                :prop="'steps.' + i + '.metoda'"
+                :rules="{
+                  required: true,
+                  message: 'Step nemože biti prazan',
+                  trigger: 'blur',
+                }"
+              >
+                <!--   {{ value.step }} {{ value }} {{ i }} -->
+                <el-input
+                  type="textarea"
+                  placeholder="Unesite korak"
+                  v-model="value.step"
+                  stype="padding: 0px 0px 10px 0px;"
+                ></el-input
+                ><span
+                  ><el-button @click.prevent="removeStep(key, value)"
+                    >Delete</el-button
+                  ></span
+                >
+              </el-form-item>
+              <el-form-item>
+                <el-button @click="addStep(key)">add step</el-button>
+                <el-divider></el-divider>
+              </el-form-item>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="submitForm('ruleForm')"
+                >Create</el-button
+              >
+            </el-form-item>
+            <!--   <el-divider></el-divider>
+            <p
+              style="
+                text-align: left;
+                line-height: 40px;
+                font-size: 14px;
+                color: #606266;
+              "
+            >
+              Koraci
+              <button type="button" style="float:right">
+                Dodaj kategoriju
+              </button>
+            </p>
+            <el-input
+              :placeholder="ruleForm.steps[0].metoda"
+              :v-model="ruleForm.steps[0].metoda"
+              style="padding: 0px 0px 10px 0px;display: block;width:200px"
+            ></el-input>
             <el-form-item
               id="wrapper"
               class="koraci"
@@ -83,7 +231,7 @@
               <el-input
                 type="textarea"
                 :placeholder="[[index + 1]] + ' step'"
-                v-model="value.step"
+                v-model="value.index"
                 stype="padding: 0px 0px 10px 0px;"
               ></el-input
               ><span
@@ -93,13 +241,14 @@
               >
             </el-form-item>
             <el-form-item>
-              <el-button @click="addStep">add step</el-button>
+              {{ ruleForm.steps[0].kategorijeStepova[0] }}
+              <el-button @click="addStep()">add step</el-button>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="submitForm('ruleForm')"
                 >Create</el-button
               >
-            </el-form-item>
+            </el-form-item> -->
           </el-form>
         </div>
       </el-row>
@@ -108,62 +257,105 @@
 </template>
 
 <script>
-import { recepti } from "@/services";
+import { recepti } from '@/services/index'
 export default {
   data() {
     return {
       ruleForm: {
-        naziv: "",
-        prepTime: "",
-        cookTime: "",
-        sastojci: "",
+        naziv: '',
+        kategorije: '',
+        prepTime: '',
+        cookTime: '',
+        sastojci: [
+          {
+            ing: '',
+          },
+        ],
         steps: [
           {
-            step: "",
+            metoda: '',
+            kategorijeStepova: [
+              {
+                step: '',
+              },
+            ],
           },
         ],
       },
       src: null,
       rules: {
-        naziv: [{ required: true, message: "Unesite naziv", trigger: "blur" }],
+        naziv: [{ required: true, message: 'Unesite naziv', trigger: 'blur' }],
         sastojci: [
-          { required: true, message: "unesite sastojke", trigger: "blur" },
+          { required: true, message: 'unesite sastojke', trigger: 'blur' },
         ],
         prepTime: [
-          { required: true, message: "unesite vrijeme", trigger: "blur" },
+          { required: true, message: 'unesite vrijeme', trigger: 'blur' },
         ],
         cookTime: [
-          { required: true, message: "unesite vrijeme", trigger: "blur" },
+          { required: true, message: 'unesite vrijeme', trigger: 'blur' },
         ],
       },
-    };
+    }
   },
   methods: {
     onSubmit() {
-      console.log("submit!");
+      console.log('submit!')
       let recept = {
-        naziv: this.naziv,
+        naziv: this.ruleForm.naziv,
         src: this.src,
-        prepTime: this.prepTime,
-        cookTime: this.cookTime,
-        sastojci: this.sastojci,
-        steps: this.steps,
-      };
-      recepti.createRecept(recept).then(() => {
+        prepTime: this.ruleForm.prepTime,
+        cookTime: this.ruleForm.cookTime,
+        sastojci: this.ruleForm.sastojci,
+        steps: this.ruleForm.steps,
+      }
+      /*   recepti.createRecept(recept).then(() => {
         this.$router.push({ name: "Home" });
-      });
+      }); */
+      console.log(recept)
     },
-    removeStep(item) {
-      var index = this.ruleForm.steps.indexOf(item);
+    removeIng(item) {
+      var index = this.ruleForm.sastojci.indexOf(item)
       if (index !== -1) {
-        this.ruleForm.steps.splice(index, 1);
+        this.ruleForm.sastojci.splice(index, 1)
       }
     },
-    addStep() {
-      this.ruleForm.steps.push({
-        value: "",
-      });
+    addIng() {
+      this.ruleForm.sastojci.push({
+        ing: '',
+      })
     },
+    removeStep(num, item) {
+      var index = this.ruleForm.steps[num].kategorijeStepova.findIndex(
+        (value) => {
+          console.log('ovo je value ', value.step)
+          return value.step == item.step
+        }
+      )
+      console.log(index, num, item.step)
+      if (index !== -1) {
+        this.ruleForm.steps[num].kategorijeStepova.splice(index, 1)
+      }
+    },
+    addStep(event) {
+      console.log(event)
+      this.ruleForm.steps[event].kategorijeStepova.push({
+        step: '',
+      })
+    },
+    addKategoriju() {
+      this.ruleForm.steps.push({
+        metoda: '',
+        kategorijeStepova: [
+          {
+            step: '',
+          },
+        ],
+      })
+    },
+    removeKategoriju(index) {
+      this.ruleForm.steps.splice(index, 1)
+    },
+
     /*    submit() {
       const data = {
         steps: this.steps,
@@ -172,13 +364,13 @@ export default {
     }, */
     // funkcije za sliku ------->
     uploadImage(e) {
-      const image = e.target.files[0];
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
+      const image = e.target.files[0]
+      const reader = new FileReader()
+      reader.readAsDataURL(image)
       reader.onload = (e) => {
-        this.src = e.target.result;
-        console.log(this.src);
-      };
+        this.src = e.target.result
+        console.log(this.src)
+      }
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -186,42 +378,71 @@ export default {
           let recept = {
             naziv: this.ruleForm.naziv,
             src: this.src,
+            kategorije: this.ruleForm.kategorije,
             prepTime: this.ruleForm.prepTime,
             cookTime: this.ruleForm.cookTime,
             sastojci: this.ruleForm.sastojci,
             steps: this.ruleForm.steps,
-          };
+          }
           recepti.createRecept(recept).then(() => {
-            this.$router.push({ name: "Home" });
-          });
-          alert(recept);
+            this.$router.push({ name: 'Home' })
+          })
+          alert(recept.naziv)
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
   },
-};
+}
 </script>
 <style lang="scss">
+div#kategorija.el-form-item.kategorija.is-required
+  div.el-form-item__content
+  div#wrapper.el-form-item.koraci.is-error.is-required
+  div.el-form-item__content
+  div.el-form-item__error {
+  margin: -60px 16px 0 251px;
+}
+.el-textarea {
+  vertical-align: middle;
+  width: 100%;
+}
+.sastojci {
+  .el-button {
+    margin: 10px 0 0 0;
+  }
+}
+.koraci {
+  .el-textarea {
+    textarea {
+      height: 200px;
+    }
+  }
+  .el-button {
+    margin: 10px 0 20px 0;
+  }
+}
 .unos {
+  padding: 10px;
+}
+/* .unos {
   display: flex;
   padding: 10px;
   justify-content: center;
   .vrijeme {
-    display: flex;
-    padding: 10px 0px;
-    /*    .el-from-item > .el-form-item__content:first-child {
-      float: left;
+    display: inline-block;
+    .el-from-item > .el-form-item__content:first-child {
       margin-left: -30px;
+      display: inline-block;
       .el-input {
         width: 59%;
         .el-input__inner {
           width: 132px;
         }
       }
-    } */
+    }
     .el-form-item {
       margin-bottom: 0px;
       .el-form-item__content {
@@ -243,23 +464,34 @@ export default {
       }
     }
   }
-}
+  .sastojci {
+    .el-input {
+      width: 225px;
+    }
+  }
+} */
 @media (min-width: 720px) {
-  .koraci {
-    > .el-form-item__content {
-      width: 91%;
+  .unos {
+    .koraci {
       .el-textarea {
         padding: 0px 5px 10px 0px;
-      }
-      span {
-        .el-button {
-          position: absolute;
-          top: 20%;
+        textarea {
+          height: 100px;
         }
       }
     }
   }
+
+  div.el-col.el-col-24.el-col-xs-24.el-col-sm-13.el-col-md-13.el-col-lg-13
+    div.el-row
+    div.unos
+    form.el-form
+    div#kategorija.el-form-item.kategorija.is-required
+    div.el-form-item__content
+    div#wrapper.el-form-item.koraci.is-error.is-required
+    div.el-form-item__content
+    div.el-form-item__error {
+    margin: -69px 16px 0 866px;
+  }
 }
 </style>
-
->

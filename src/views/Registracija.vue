@@ -22,9 +22,9 @@
             prefix-icon="fas fa-user"
           ></el-input>
         </el-form-item>
-        <el-form-item prop="pass">
+        <el-form-item prop="password">
           <el-input
-            v-model="ruleForm.pass"
+            v-model="ruleForm.password"
             placeholder="Password"
             type="password"
             prefix-icon="fas fa-lock"
@@ -71,99 +71,114 @@
 </template>
 
 <script>
-import store from "@/store.js";
+import { Auth } from '@/services/auth'
+import store from '@/store.js'
 export default {
-  name: "registracija",
+  name: 'registracija',
   data() {
     var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please input the password"));
+      if (value === '') {
+        callback(new Error('Please input the password'))
       } else {
-        if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("repeat");
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.ruleForm.validateField('checkpass')
         }
-        callback();
+        callback()
       }
-    };
+    }
     var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please input the password again"));
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error("Two inputs don't match!"));
+      if (value === '') {
+        callback(new Error('Please input the password again'))
+      } else if (value !== this.ruleForm.password) {
+        callback(new Error("Two inputs don't match!"))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     var validateEmail = (rule, value, callback) => {
-      const reg = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
-      if (value === "") {
-        callback(new Error("please input the email"));
+      const reg = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/
+      if (value === '') {
+        callback(new Error('please input the email'))
       } else if (reg.test(value)) {
-        callback();
+        callback()
       } else {
-        callback(new Error("Please enter a valid email address"));
+        callback(new Error('Please enter a valid email address'))
       }
-    };
-    var checkDay = (value) => value >= 1 && value <= 31;
-    var checkMonth = (value) => value >= 1 && value <= 12;
+    }
+    var checkDay = (value) => value >= 1 && value <= 31
+    var checkMonth = (value) => value >= 1 && value <= 12
 
     var validateDate = (rule, value, callback) => {
-      if (value.dan && value.mjesec && value.godina === "") {
-        callback(new Error("please input the date"));
+      if (value.dan && value.mjesec && value.godina === '') {
+        callback(new Error('please input the date'))
       } else if (checkDay(value.dan) && checkMonth(value.mjesec)) {
-        console.log(value);
-        callback();
+        console.log(value)
+        callback()
       } else {
-        console.log(value.dan);
-        callback(new Error("please input valid number"));
+        console.log(value.dan)
+        callback(new Error('please input valid number'))
       }
-    };
+    }
     return {
       store,
       ruleForm: {
-        username: "",
-        email: "",
-        pass: "",
-        checkPass: "",
-        age: "21",
-        date: { dan: "", mjesec: "", godina: "" },
+        username: '',
+        email: '',
+        password: '',
+        checkPass: '',
+        date: { dan: '', mjesec: '', godina: '' },
       },
+
       rules: {
-        pass: [{ validator: validatePass, trigger: "blur" }],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }],
+        password: [
+          { required: true, validator: validatePass, trigger: 'blur' },
+        ],
+        checkPass: [{ validator: validatePass2, trigger: 'blur' }],
         username: [
           {
             required: true,
-            message: "Please input username",
-            trigger: "blur",
+            message: 'Please input username',
+            trigger: 'blur',
           },
           {
             min: 3,
             max: 5,
-            message: "Length should be 3 to 5",
-            trigger: "blur",
+            message: 'Length should be 3 to 5',
+            trigger: 'blur',
           },
         ],
-        email: [{ validator: validateEmail, trigger: "blur" }],
-        date: [{ validator: validateDate, trigger: "blur" }],
+        email: [{ validator: validateEmail, trigger: 'blur' }],
+        date: [{ validator: validateDate, trigger: 'blur' }],
       },
-    };
+    }
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+    async submitForm(formName) {
+      let valid = this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
-          this.store.currentEmail = this.ruleForm.username;
-          this.$router.push({ name: "Home" });
+          alert('submit!')
+          return true
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+      if (valid) {
+        await Auth.signUp(this.ruleForm)
+        this.$router.push({ name: 'Home' })
+      } else alert('neuspjeh')
+    },
+
+    /*    await this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert(success);
         } else {
           console.log("error submit!!");
           return false;
         }
-      });
-    },
+      }); */
   },
-};
+}
 </script>
 <style lang="scss" scoped>
 $teal: rgb(0, 124, 137);
@@ -214,7 +229,7 @@ $teal: rgb(0, 124, 137);
   padding-bottom: 30px;
 }
 h2 {
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
   letter-spacing: 1px;
   font-family: Roboto, sans-serif;
   padding-bottom: 20px;

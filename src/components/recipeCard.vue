@@ -1,6 +1,6 @@
 <template>
   <el-row class="boje">
-    <div class="blog-card">
+    <div class="blog-card antish">
       <div class="meta">
         <div
           class="photo"
