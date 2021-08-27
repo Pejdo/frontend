@@ -52,7 +52,7 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="Config" name="second">
+        <el-tab-pane label="Moji recepti" name="second">
           <recipeCard
             v-for="index in recipes"
             :key="index.id"
@@ -61,83 +61,93 @@
             @deleteIt="deleteRecipe($event)"
           />
         </el-tab-pane>
+        <el-tab-pane label="Favoriti" name="third">
+          <recipeCardNormal
+            v-for="index in favorit"
+            :key="index.id"
+            :recept="index"
+          />
+        </el-tab-pane>
       </el-tabs>
     </el-col>
   </el-row>
 </template>
 <script>
-import { Auth } from "@/services/auth";
-import { recepti } from "@/services/index";
-import store from "@/store.js";
-import recipeCard from "../components/_recipeCardProfile.vue";
+import { Auth } from '@/services/auth'
+import { recepti } from '@/services/index'
+import store from '@/store.js'
+import recipeCard from '../components/_recipeCardProfile.vue'
+import recipeCardNormal from '../components/_recipeCard.vue'
+
 export default {
-  components: { recipeCard },
-  name: "registracija",
+  components: { recipeCard, recipeCardNormal },
+  name: 'registracija',
   data() {
     var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please input the password"));
+      if (value === '') {
+        callback(new Error('Please input the password'))
       } else {
-        if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("repeat");
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.ruleForm.validateField('repeat')
         }
-        callback();
+        callback()
       }
-    };
+    }
     var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Please input the password again"));
+      if (value === '') {
+        callback(new Error('Please input the password again'))
       } else if (value !== this.ruleForm.password) {
-        callback(new Error("Two inputs don't match!"));
+        callback(new Error("Two inputs don't match!"))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     var validateEmail = (rule, value, callback) => {
-      const reg = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/;
-      if (value === "") {
-        callback(new Error("please input the email"));
+      const reg = /^(([^<>()\]\\.,;:\s@"]+(\.[^<>()\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/
+      if (value === '') {
+        callback(new Error('please input the email'))
       } else if (reg.test(value)) {
-        callback();
+        callback()
       } else {
-        callback(new Error("Please enter a valid email address"));
+        callback(new Error('Please enter a valid email address'))
       }
-    };
+    }
 
     return {
       store,
       recipes: null,
-      activeName: "first",
+      activeName: 'first',
+      favorit: [],
       ruleForm: {
-        username: "",
-        email: "",
-        password: "",
-        checkPass: "",
+        username: '',
+        email: '',
+        password: '',
+        checkPass: '',
       },
       rules: {
-        password: [{ validator: validatePass, trigger: "blur" }],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }],
+        password: [{ validator: validatePass, trigger: 'blur' }],
+        checkPass: [{ validator: validatePass2, trigger: 'blur' }],
         username: [
           {
             required: true,
-            message: "Please input username",
-            trigger: "blur",
+            message: 'Please input username',
+            trigger: 'blur',
           },
           {
             min: 3,
             max: 5,
-            message: "Length should be 3 to 5",
-            trigger: "blur",
+            message: 'Length should be 3 to 5',
+            trigger: 'blur',
           },
         ],
-        email: [{ validator: validateEmail, trigger: "blur" }],
+        email: [{ validator: validateEmail, trigger: 'blur' }],
       },
-    };
+    }
   },
   methods: {
     async submitForm() {
-      let success = await Auth.signUp(this.ruleForm);
-      console.log(success);
+      let success = await Auth.signUp(this.ruleForm)
+      console.log(success)
       /*    await this.$refs[formName].validate((valid) => {
         if (valid) {
           alert(success);
@@ -148,29 +158,33 @@ export default {
       }); */
     },
     async getData() {
-      this.recipes = await recepti.usersRecipes(this.ruleForm.username);
+      this.recipes = await recepti.usersRecipes(this.ruleForm.username)
     },
     handleClick(tab, event) {
-      console.log(tab, event);
+      console.log(tab, event)
     },
     editRecipe(link) {
-      console.log(link);
-      this.$router.push(`/profil/${link}`);
+      console.log(link)
+      this.$router.push(`/profil/${link}`)
     },
     async deleteRecipe(link) {
-      console.log(link);
-      await recepti.deleteRecipe(link);
-      this.recipes = await recepti.usersRecipes(this.ruleForm.username);
+      console.log(link)
+      await recepti.deleteRecipe(link)
+      this.recipes = await recepti.usersRecipes(this.ruleForm.username)
     },
   },
   async mounted() {
-    let data = await Auth.getUserInfo();
-    this.ruleForm = data;
-    console.log(data._id);
-    store.trenutniKorisnik = data.username;
-    this.recipes = await recepti.usersRecipes(this.ruleForm.username);
+    let data = await Auth.getUserInfo()
+    this.ruleForm = data
+    console.log(data._id)
+    this.recipes = await recepti.usersRecipes(this.ruleForm.username)
+    let arr = await recepti.getFavoriti(data._id)
+    for (let value of arr) {
+      console.log(value[0])
+      this.favorit.push(value[0])
+    }
   },
-};
+}
 </script>
 <style lang="scss">
 .el-tabs__nav-wrap {

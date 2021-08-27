@@ -40,17 +40,10 @@ let recepti = {
     return
   },
 
-  async makeChange(id) {
-    let serverData = {
-      naziv: id.naziv,
-      src: id.src,
-      prepTime: id.prepTime,
-      cookTime: id.cookTime,
-      sastojci: id.sastojci,
-      steps: id.steps,
-    }
-    console.log('editam', id._id)
-    await Service.patch(`/profil/${id.id}`, serverData)
+  async makeChange(data) {
+    console.log('editam', data.id)
+    console.log(data)
+    await Service.patch(`/profil/${data.id}`, data)
     return
   },
 
@@ -72,7 +65,7 @@ let recepti = {
     }
   },
 
-  async getOneEdit(id) {
+  /*   async getOneEdit(id) {
     let response = await Service.get(`/profil/${id}`)
     let recept = response.data
     return {
@@ -88,7 +81,7 @@ let recepti = {
       date: recept.date,
     }
   },
-
+ */
   async getAll(search) {
     console.log('ovo je search ' + search)
     let response = await Service.get(`?naziv=${search}`)
@@ -159,6 +152,28 @@ let recepti = {
   async rateRecept(value) {
     await Service.patch(`/recepti/${value.id}`, value)
     return
+  },
+  async getComments(id) {
+    console.log('getComments ', id)
+    let response = await Service.get(`/komentari/${id}`)
+
+    return response.data.komentari
+  },
+  async addComments(data, id) {
+    console.log('addComments', id, data)
+    let res = await Service.patch(`/local/${id}`, data)
+    return res
+  },
+  async getFavoriti(id) {
+    console.log('getFavoriti', id)
+    let res = await Service.get(`/savedRecipe/${id}`)
+    console.log('res ' + res.data)
+    return res.data
+  },
+  async addFavorit(data, id) {
+    console.log('addFavorit', id)
+    let res = await Service.patch(`/favoriti/${id}`, { id: data })
+    return res
   },
 }
 export { Service, recepti }

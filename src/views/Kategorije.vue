@@ -4,10 +4,10 @@
       <div class="grid-content bg-purple"></div>
       <el-checkbox-group v-model="checkbox" size="medium">
         <el-checkbox-button
-          v-for="city in kategorije"
-          :label="city"
-          :key="city"
-          >{{ city }}</el-checkbox-button
+          v-for="cat in kategorije"
+          :label="kategorije"
+          :key="cat"
+          >{{ cat }}</el-checkbox-button
         >
       </el-checkbox-group>
       <recipeCard />

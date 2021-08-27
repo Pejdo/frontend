@@ -20,7 +20,15 @@
 
             <!-- //slika -->
             <el-divider></el-divider>
-            <el-form-item label="Kategorije">
+            <el-form-item
+              label="Kategorije"
+              prop="kategorije"
+              :rules="{
+                required: true,
+                message: 'unesite sastojke',
+                trigger: 'blur',
+              }"
+            >
               <el-select
                 v-model="ruleForm.kategorije"
                 placeholder="Odaberite kategorije"
@@ -154,7 +162,7 @@
               :prop="'steps.' + key + '.metoda'"
               :rules="{
                 required: true,
-                message: 'Step nemože biti prazan',
+                message: 'metoda nemože biti prazan',
                 trigger: 'blur',
               }"
             >
@@ -167,7 +175,7 @@
                 class="koraci"
                 v-for="(value, i) in ruleForm.steps[key].kategorijeStepova"
                 :key="i"
-                :prop="'steps.' + i + '.metoda'"
+                :prop="`steps[${key}].kategorijeStepova[${i}].step`"
                 :rules="{
                   required: true,
                   message: 'Step nemože biti prazan',

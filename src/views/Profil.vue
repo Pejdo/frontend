@@ -20,6 +20,50 @@
 
             <!-- //slika -->
             <el-divider></el-divider>
+            <el-form-item
+              label="Kategorije"
+              prop="kategorije"
+              :rules="{
+                required: true,
+                message: 'unesite sastojke',
+                trigger: 'blur',
+              }"
+            >
+              <el-select
+                v-model="ruleForm.kategorije"
+                placeholder="Odaberite kategorije"
+              >
+                <el-option label="Doručak" value="Doručak"></el-option>
+                <el-option label="Ručak" value="Ručak"></el-option>
+                <el-option label="Pića" value="Pića"></el-option>
+                <el-option label="Predjela" value="Predjela"></el-option>
+                <el-option label="Juhe" value="Juhe"></el-option>
+                <el-option label="Salate" value="Salate"></el-option>
+                <el-option
+                  label="Glavna jela: govedina"
+                  value="Glavna jela: govedina"
+                ></el-option>
+                <el-option
+                  label="Glavna jela: perad"
+                  value="Glavna jela: perad"
+                ></el-option>
+                <el-option
+                  label="Glavna jela: svinjetina"
+                  value="Glavna jela: svinjetina"
+                ></el-option>
+                <el-option
+                  label="Glavna jela: plodovi mora"
+                  value="Glavna jela: plodovi mora"
+                ></el-option>
+                <el-option
+                  label="Glavna jela: vegetarijanska"
+                  value="Glavna jela: vegetarijanska"
+                ></el-option>
+                <el-option label="Deserti" value="Deserti"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-divider></el-divider>
+
             <div class="vrijeme">
               <el-form-item prop="prepTime" label="Vrijeme">
                 <el-tooltip
@@ -118,18 +162,20 @@
               :prop="'steps.' + key + '.metoda'"
               :rules="{
                 required: true,
-                message: 'Step nemože biti prazan',
+                message: 'metoda nemože biti prazan',
                 trigger: 'blur',
               }"
             >
-              <el-input v-model="index.metoda"></el-input>
-              {{ index.metoda }} {{ key }}
+              <el-input
+                placeholder="Unesite kategoriju"
+                v-model="index.metoda"
+              ></el-input>
               <el-form-item
                 id="wrapper"
                 class="koraci"
                 v-for="(value, i) in ruleForm.steps[key].kategorijeStepova"
                 :key="i"
-                :prop="'steps.' + i + '.metoda'"
+                :prop="`steps[${key}].kategorijeStepova[${i}].step`"
                 :rules="{
                   required: true,
                   message: 'Step nemože biti prazan',
@@ -139,7 +185,7 @@
                 <!--   {{ value.step }} {{ value }} {{ i }} -->
                 <el-input
                   type="textarea"
-                  :placeholder="value.step"
+                  placeholder="Unesite korak"
                   v-model="value.step"
                   stype="padding: 0px 0px 10px 0px;"
                 ></el-input
@@ -219,37 +265,26 @@
 </template>
 
 <script>
-import { recepti } from "@/services/index";
+import { recepti } from '@/services/index'
 export default {
-  props: ["id"],
+  props: ['id'],
   data() {
     return {
       ruleForm: {
-        naziv: "",
-        prepTime: "",
-        cookTime: "",
+        naziv: '',
+        prepTime: '',
+        cookTime: '',
         sastojci: [
           {
-            ing: "",
+            ing: '',
           },
         ],
         steps: [
           {
-            metoda: "qq",
+            metoda: '',
             kategorijeStepova: [
               {
-                step: "ww",
-              },
-            ],
-          },
-          {
-            metoda: "kk",
-            kategorijeStepova: [
-              {
-                step: "eee",
-              },
-              {
-                step: "ffff",
+                step: '',
               },
             ],
           },
@@ -257,22 +292,22 @@ export default {
       },
       src: null,
       rules: {
-        naziv: [{ required: true, message: "Unesite naziv", trigger: "blur" }],
+        naziv: [{ required: true, message: 'Unesite naziv', trigger: 'blur' }],
         sastojci: [
-          { required: true, message: "unesite sastojke", trigger: "blur" },
+          { required: true, message: 'unesite sastojke', trigger: 'blur' },
         ],
         prepTime: [
-          { required: true, message: "unesite vrijeme", trigger: "blur" },
+          { required: true, message: 'unesite vrijeme', trigger: 'blur' },
         ],
         cookTime: [
-          { required: true, message: "unesite vrijeme", trigger: "blur" },
+          { required: true, message: 'unesite vrijeme', trigger: 'blur' },
         ],
       },
-    };
+    }
   },
   methods: {
     onSubmit() {
-      console.log("submit!");
+      console.log('submit!')
       let recept = {
         naziv: this.naziv,
         src: this.src,
@@ -280,52 +315,52 @@ export default {
         cookTime: this.cookTime,
         sastojci: this.sastojci,
         steps: this.steps,
-      };
+      }
       recepti.createRecept(recept).then(() => {
-        this.$router.push({ name: "Home" });
-      });
+        this.$router.push({ name: 'Home' })
+      })
     },
     removeIng(item) {
-      var index = this.ruleForm.sastojci.indexOf(item);
+      var index = this.ruleForm.sastojci.indexOf(item)
       if (index !== -1) {
-        this.ruleForm.sastojci.splice(index, 1);
+        this.ruleForm.sastojci.splice(index, 1)
       }
     },
     addIng() {
       this.ruleForm.sastojci.push({
-        ing: "",
-      });
+        ing: '',
+      })
     },
     removeStep(num, item) {
       var index = this.ruleForm.steps[num].kategorijeStepova.findIndex(
         (value) => {
-          console.log("ovo je value ", value.step);
-          return value.step == item.step;
+          console.log('ovo je value ', value.step)
+          return value.step == item.step
         }
-      );
-      console.log(index, num, item.step);
+      )
+      console.log(index, num, item.step)
       if (index !== -1) {
-        this.ruleForm.steps[num].kategorijeStepova.splice(index, 1);
+        this.ruleForm.steps[num].kategorijeStepova.splice(index, 1)
       }
     },
     addStep(event) {
-      console.log(event);
+      console.log(event)
       this.ruleForm.steps[event].kategorijeStepova.push({
-        step: "",
-      });
+        step: '',
+      })
     },
     addKategoriju() {
       this.ruleForm.steps.push({
-        metoda: "",
+        metoda: '',
         kategorijeStepova: [
           {
-            step: "",
+            step: '',
           },
         ],
-      });
+      })
     },
     removeKategoriju(index) {
-      this.ruleForm.steps.splice(index, 1);
+      this.ruleForm.steps.splice(index, 1)
     },
     /*    submit() {
       const data = {
@@ -335,13 +370,13 @@ export default {
     }, */
     // funkcije za sliku ------->
     uploadImage(e) {
-      const image = e.target.files[0];
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
+      const image = e.target.files[0]
+      const reader = new FileReader()
+      reader.readAsDataURL(image)
       reader.onload = (e) => {
-        this.src = e.target.result;
-        console.log(this.src);
-      };
+        this.src = e.target.result
+        console.log(this.src)
+      }
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -349,28 +384,29 @@ export default {
           let recept = {
             id: this.id,
             naziv: this.ruleForm.naziv,
+            kategorije: this.ruleForm.kategorije,
             src: this.ruleForm.src,
             prepTime: this.ruleForm.prepTime,
             cookTime: this.ruleForm.cookTime,
             sastojci: this.ruleForm.sastojci,
             steps: this.ruleForm.steps,
-          };
+          }
           recepti.makeChange(recept).then(() => {
-            this.$router.push({ name: "Home" });
-          });
-          alert(recept);
+            this.$router.push({ name: 'Home' })
+          })
+          alert(recept)
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
   },
   async mounted() {
-    console.log("profil ", this.id);
-    this.ruleForm = await recepti.getOneEdit(this.id);
+    console.log('profil ', this.id)
+    this.ruleForm = await recepti.getOne(this.id)
   },
-};
+}
 </script>
 <style lang="scss">
 /* .unos {

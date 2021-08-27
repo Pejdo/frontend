@@ -66,32 +66,36 @@
 
 <script>
 /* import router from "@/router/index.js"; */
-import navbar from "@/components/navbar.vue";
-import store from "@/store.js";
+import navbar from '@/components/navbar.vue'
+import store from '@/store.js'
+import { Auth } from '@/services/auth'
 export default {
   components: { navbar },
   data() {
     return {
-      search1: "",
+      search1: '',
       store,
-    };
+    }
   },
   methods: {
     recept() {
-      this.$router.push("/recept");
+      this.$router.push('/recept')
     },
     searchhh(value) {
-      this.store.search = value;
+      this.store.search = value
     },
   },
-};
+  mounted() {
+    this.store.trenutniKorisnik = Auth.getUsersName()
+  },
+}
 </script>
 
 <style lang="scss">
 $siva: rgb(15, 9, 9);
 
 #app {
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Ubuntu, San Francisco UI;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

@@ -28,6 +28,11 @@
               >homepage</el-breadcrumb-item
             >
             <el-breadcrumb-item>{{ recept.naziv }} </el-breadcrumb-item>
+            <el-breadcrumb-item
+              ><button type="button" @click="dodajUFavorite">
+                Dodaj u favorite
+              </button></el-breadcrumb-item
+            >
           </el-breadcrumb>
         </div>
         <div class="cookTime">
@@ -83,7 +88,7 @@
             >
             <el-popover placement="right" width="400" trigger="click">
               <el-rate v-model="rating"></el-rate>
-              <button type="button" @click="rateIt">submpuir</button>
+              <button type="button" @click="rateIt">Ocjeni</button>
               <el-button slot="reference" style="margin-top:20px"
                 >Ocjenite recept</el-button
               >
@@ -93,58 +98,31 @@
           <div class="kom">
             <div class="post-content">
               <div class="post-container">
-                <img
-                  src="https://bootdey.com/img/Content/avatar/avatar6.png"
-                  alt="user"
-                  class="profile-photo-md pull-left"
-                />
                 <div class="post-detail">
                   <div class="user-info">
-                    <h5>
-                      <a href="timeline.html" class="profile-link"
-                        >Alexis Clark</a
-                      >
-                    </h5>
+                    Komentari
                     <p class="text-muted">
-                      Published a photo about 3 mins ago
+                      {{ recept.date }}
                     </p>
                   </div>
-                  <div class="post-comment">
-                    <img
-                      src="https://bootdey.com/img/Content/avatar/avatar7.png"
-                      alt=""
-                      class="profile-photo-sm"
-                    />
-                    <p>
-                      <i class="em em-laughing"></i> Lorem ipsum dolor sit amet,
-                      consectetur adipiscing elit, sed do eiusmod tempor
-                      incididunt ut labore et dolore magna aliqua. Ut enim ad
-                      minim veniam, quis nostrud
-                    </p>
+                  <div class="post-comment" v-for="com in komentar" :key="com">
+                    <p>{{ com.user }}</p>
+                    <p><i class="em em-laughing"></i> {{ com.com }}</p>
+                    <p>{{ com.date }}</p>
                   </div>
                   <div class="post-comment">
-                    <img
-                      src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                      alt=""
-                      class="profile-photo-sm"
-                    />
-                    <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud
-                    </p>
-                  </div>
-                  <div class="post-comment">
-                    <img
-                      src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                      alt=""
-                      class="profile-photo-sm"
-                    />
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="Post a comment"
-                    />
+                    <el-input
+                      type="textarea"
+                      placeholder="Dodaj komentar"
+                      v-model="comentar"
+                    ></el-input>
+                    <button
+                      type="button"
+                      style="margin-top:10px"
+                      @click="objaviKomentar"
+                    >
+                      Dodaj Komentar
+                    </button>
                   </div>
                 </div>
               </div>
@@ -156,16 +134,20 @@
   </div>
 </template>
 <script>
+import { Auth } from '@/services/auth.js'
 import { recepti } from '@/services/index.js'
+import store from '@/store'
 export default {
   data() {
     return {
       fits: ['fill', 'contain', 'cover', 'none', 'scale-down'],
       url: 'https://cdn.wallpapersafari.com/98/55/qiIX8l.jpg',
-      rating: '',
+      rating: 0,
+      comentar: '',
+      store,
     }
   },
-  props: ['recept'],
+  props: ['recept', 'komentar'],
   methods: {
     async rateIt() {
       let serverData = {
@@ -175,13 +157,28 @@ export default {
       console.log(serverData)
       await recepti.rateRecept(serverData)
     },
+    async objaviKomentar() {
+      let data = {
+        user: this.store.trenutniKorisnik,
+        coms: this.comentar,
+        date: Date.now(),
+      }
+      await recepti.addComments(data, this.recept.id)
+      this.coms = ''
+    },
+    dodajUFavorite() {
+      console.log('ehehe') /*  */
+      recepti.addFavorit(this.store.trenutniKorisnikId, this.recept.id)
+    },
   },
-  mounted() {
-    console.log(this.recept.rating.length)
+
+  async mounted() {
+    this.store.trenutniKorisnikId = await Auth.getUserID()
+    console.log('ovo ej trenutni ', this.store.trenutniKorisnikId)
     let k = this.recept.rating.reduce((sum, nxt) => (sum += nxt))
+
     /*   / / this.recept.rating.length
       this.recept.rating.lenght() */
-    console.log('ovo je ', k / this.recept.rating.length)
     this.recept.rating = k / this.recept.rating.length
   },
 }
@@ -260,7 +257,6 @@ export default {
             border-radius: 50%;
           }
           .post-comment {
-            display: inline-flex;
             margin: 10px auto;
             width: 100%;
             text-align: justify;

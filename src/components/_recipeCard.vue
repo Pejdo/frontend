@@ -12,12 +12,9 @@
 
           <!-- <button href="#">Read More</button> -->
         </h1>
-        <h2 style="text-align: left;">Opening a door to the future</h2>
+        <h2 style="text-align: left;">{{ recept.username }}</h2>
         <p style="text-align:left">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-          Reprehenderit natus labore, iure cupiditate odit sunt sequi debitis?
-          Earum iure optio exercitationem similique eum laboriosam obcaecati,
-          fugit ducimus aspernatur, ratione eos!
+          Ukupno vremena: {{ recept.cookTime + recept.prepTime }}
         </p>
         <el-rate
           v-model="recept.rating"
@@ -36,11 +33,15 @@
 <script>
 export default {
   data() {
-    return {
-      value: 0,
-    }
+    return {}
   },
   props: ['recept'],
+  beforeMount() {
+    let k = this.recept.rating.reduce((sum, nxt) => (sum += nxt))
+    /*   / / this.recept.rating.length
+      this.recept.rating.lenght() */
+    this.recept.rating = k / this.recept.rating.length
+  },
 }
 /* boje.addEventListener("hover", () => {
   console.log("hej");

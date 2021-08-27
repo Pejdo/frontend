@@ -1,8 +1,9 @@
 export default {
-  currentEmail: "",
-  password: "",
+  currentEmail: '',
+  password: '',
   currentUserIsAdmin: false,
   trenutniKorisnik: {},
+  trenutniKorisnikId: {},
   recept: {},
-  search: "",
-};
+  search: '',
+}
